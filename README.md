@@ -1,16 +1,16 @@
 # DDS-Project
  DDS-Project2223 - Kafka Service
-##Kafka Serice
+## Kafka Serice
 ### Start zookeeper and the broker
 
 ```bash
-cd zookeeper
+cd kafka/zookeeper_kafka
 docker compose up --build -d
 ```
 
-##Start producer and consumer
+### Start producer and consumer
 
 ```bash
-cd app
+cd kafka/app
 docker compose up --build -d
 ```
