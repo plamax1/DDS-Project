@@ -1,0 +1,28 @@
+version: "3"
+services:
+  producer-live:
+    build:
+      context: producer_live/
+    network_mode: host
+    
+  producer-static:
+    build:
+      context: producer_static/
+    network_mode: host
+  
+  consumer_1:
+    build:
+      context: consumer_1/
+    network_mode: host
+
+  consumer_2:
+    build:
+      context: consumer_2/
+    network_mode: host
+
+  consumer_3:
+    build:
+      context: consumer_3/
+    network_mode: host
+
+  
