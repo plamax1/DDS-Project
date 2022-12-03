@@ -1,2 +1,2 @@
 # DDS-Project
- DDS-Project2223
+ DDS-Project2223 - Kafka Service
