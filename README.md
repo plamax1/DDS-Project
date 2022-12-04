@@ -1,7 +1,7 @@
 # DDS-Project
  DDS-Project2223
 Comparison and a performance evaluation of three solutions implementing the publisher-subscriber message pattern.
-## Kafka Serice
+## Kafka Service
 ### Start zookeeper and the broker
 
 ```bash
