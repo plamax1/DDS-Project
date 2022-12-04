@@ -5,7 +5,9 @@ producer = KafkaProducer(
     bootstrap_servers=['localhost:9092'],
     value_serializer=lambda x: dumps(x).encode('utf-8')
 )
-for j in range(9999):
+iterations= int(input("How many messages do you want to send?"))
+
+for j in range(iterations):
     print("Iteration", j)
     data = {'counter': j}
     producer.send('topic_test', value=data)

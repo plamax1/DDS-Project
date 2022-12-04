@@ -9,5 +9,5 @@ for j in range(100):
     print("Iteration", j)
     data = {'counter-live': j}
     producer.send('topic_test', value=data, timestamp_ms = round(time()*1000))
-    producer.flush(timeout=1)
+    producer.flush()
     sleep(0.1)

@@ -5,11 +5,18 @@ services:
       context: producer_live/
     network_mode: host
     
-  #producer-static:
-   # build:
-    #  context: producer_static/
-    #network_mode: host
+  producer-static:
+    build:
+      context: producer_static/
+    network_mode: host
   
+  interacive_producer:
+    build:
+      context: interactive_producer/
+    network_mode: host
+    profiles:
+      - interactive
+    stdin_open: true 
   consumer:
     build:
       context: consumer/
