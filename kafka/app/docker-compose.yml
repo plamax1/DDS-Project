@@ -1,28 +1,23 @@
-version: "3"
+version: "2"
 services:
   producer-live:
     build:
       context: producer_live/
     network_mode: host
     
-  producer-static:
-    build:
-      context: producer_static/
-    network_mode: host
+  #producer-static:
+   # build:
+    #  context: producer_static/
+    #network_mode: host
   
-  consumer_1:
+  consumer:
     build:
-      context: consumer_1/
+      context: consumer/
+    deploy:
+      mode: replicated
+      replicas: 3 
     network_mode: host
 
-  consumer_2:
-    build:
-      context: consumer_2/
-    network_mode: host
 
-  consumer_3:
-    build:
-      context: consumer_3/
-    network_mode: host
 
   
