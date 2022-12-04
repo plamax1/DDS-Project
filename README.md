@@ -15,7 +15,7 @@ docker-compose up
 cd kafka/app
 docker-compose up --build 
 ```
-### Interactive producer producer
+### Interactive producer 
 The producer is waiting from stdin the number of messages to send
 
 ```bash
