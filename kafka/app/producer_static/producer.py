@@ -5,8 +5,9 @@ producer = KafkaProducer(
     bootstrap_servers=['localhost:9092'],
     value_serializer=lambda x: dumps(x).encode('utf-8')
 )
-for j in range(9999):
+for j in range(100):
     print("Iteration", j)
     data = {'counter-static': j}
-    producer.send('topic_test', value=data, timestamp_ms = time() )
+    producer.send('topic_test', value=data, timestamp_ms = round(time()*1000))
+    producer.flush()
     sleep(0.5)

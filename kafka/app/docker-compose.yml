@@ -5,10 +5,10 @@ services:
       context: producer_live/
     network_mode: host
     
-  #producer-static:
-   # build:
-    #  context: producer_static/
-    #network_mode: host
+  producer-static:
+    build:
+      context: producer_static/
+    network_mode: host
   
   consumer:
     build:
