@@ -8,7 +8,7 @@
 		<version>2.7.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>io.mahesh</groupId>
+	<groupId>rmq.gianmarcodif</groupId>
 	<artifactId>receiver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>receiver</name>
