@@ -1,4 +1,4 @@
-package rb.gianmarcodif.sender;
+package rmq.gianmarcodif.sender;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

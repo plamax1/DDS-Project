@@ -1,4 +1,4 @@
-package rb.gianmarcodif.receiver;
+package rmq.gianmarcodif.receiver;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

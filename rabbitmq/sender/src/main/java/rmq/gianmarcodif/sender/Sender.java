@@ -1,12 +1,10 @@
-package rb.gianmarcodif.sender;
-
+package rmq.gianmarcodif.sender;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
 
 @Component
 @RestController
@@ -22,7 +20,8 @@ public class Sender implements CommandLineRunner {
   public void run(String... args) throws Exception {
     System.out.println("Sending message...");
   }
-  @GetMapping("/{mesage}")
+
+  @GetMapping("/{message}")
   public String sendMessage(@PathVariable String message) {
     rabbitTemplate.convertAndSend(SenderApplication.topicExchangeName, "foo.bar.baz", message);
     return "Message sent: " + message;

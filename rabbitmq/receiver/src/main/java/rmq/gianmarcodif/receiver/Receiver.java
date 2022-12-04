@@ -1,5 +1,4 @@
-package rb.gianmarcodif.receiver;
-
+package rmq.gianmarcodif.receiver;
 import java.util.concurrent.CountDownLatch;
 import org.springframework.stereotype.Component;
 
