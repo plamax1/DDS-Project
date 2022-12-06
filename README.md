@@ -37,3 +37,13 @@ And to attach to the stdin
 docker attach "container_id"
 ```
 Now insert the number of messages to be sent
+
+### Execution with script
+Go into the folder new app and lauch script.sh with the following command
+
+
+```bash
+bash script.sh
+```
+
+this will lauch only consumers and not producer
