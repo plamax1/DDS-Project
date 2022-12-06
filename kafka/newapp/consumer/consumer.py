@@ -6,9 +6,9 @@ import numpy as np
 import sys
 topic=""
 if(len(sys.argv)<2):
-    topic="default topic"
+    topic="topic_test"
 else:
-    topic= sys.argv[1]
+    topic= sys.argv[1].strip()
 
 
 latencies = []
@@ -21,7 +21,7 @@ consumer = KafkaConsumer(
     group_id=groupid,
     value_deserializer=lambda x: loads(x.decode('utf-8'))
 )
-print("Consumer id: " , groupid, " listening on topic ", topic)
+print("Consumer id: " , groupid, " listening on topic-", topic,"-")
 event_counter=0;
 
 #dummy poll 
