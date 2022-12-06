@@ -14,7 +14,7 @@ else:
 latencies = []
 groupid=str(randint(100000000,999999999))
 consumer = KafkaConsumer(
-    'topic_test',
+    topic,
     bootstrap_servers=['localhost:9092'],
     auto_offset_reset='earliest',
     enable_auto_commit=True,
