@@ -37,7 +37,7 @@ for event in consumer:
     lat= round(time()*1000) - event.timestamp;
     latencies.append(int(lat))
     print(event_data, "Latency: " , lat)
-    if event_counter>=100:
+    if event_counter>=10000:
         break
     #sleep(0.1)
 sleep(2)
