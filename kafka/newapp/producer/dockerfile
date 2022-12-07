@@ -19,4 +19,4 @@ COPY / ./
 #CMD instruction should be used to run the software
 #contained by your image, along with any arguments.
 RUN pip install -r requirements.txt
-CMD [ "python", "-u", "./producer.py"]
+ENTRYPOINT [ "python", "-u", "./producer.py"]
