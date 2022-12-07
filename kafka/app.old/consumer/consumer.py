@@ -3,25 +3,18 @@ from json import loads
 from time import sleep, time
 from random import randint
 import numpy as np
-import sys
-topic=""
-if(len(sys.argv)<2):
-    topic="topic_test"
-else:
-    topic= sys.argv[1].strip()
-
 
 latencies = []
 groupid=str(randint(100000000,999999999))
 consumer = KafkaConsumer(
-    topic,
+    'topic_test',
     bootstrap_servers=['localhost:9092'],
     auto_offset_reset='earliest',
     enable_auto_commit=True,
     group_id=groupid,
     value_deserializer=lambda x: loads(x.decode('utf-8'))
 )
-print("Consumer id: " , groupid, " listening on topic-", topic,"-")
+print("Consumer id: " , groupid)
 event_counter=0;
 
 #dummy poll 
@@ -37,7 +30,7 @@ for event in consumer:
     lat= round(time()*1000) - event.timestamp;
     latencies.append(int(lat))
     print(event_data, "Latency: " , lat)
-    if event_counter>=10000:
+    if event_counter>=100:
         break
     #sleep(0.1)
 sleep(2)
