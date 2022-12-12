@@ -28,17 +28,29 @@ event_counter=0;
 consumer.poll()
 #go to end of the stream
 consumer.seek_to_end()
-
+thro={}
 # Event loop
+msg_size =0
 for event in consumer:
+    msg_size = sys.getsizeof(event)
     event_counter+=1
     event_data = event.value
     # Do whatever you want
     lat= round(time()*1000) - event.timestamp;
+    sec=round(time())
+   #[if_true] if [expression] else [if_false]
+    if sec in thro.keys():
+        thro[sec]+=1  
+    else:
+        thro[sec]=0
     latencies.append(int(lat))
     print(event_data, "Latency: " , lat)
-    if event_counter>=10000:
+
+    if event_counter>=1000:
         break
     #sleep(0.1)
 sleep(2)
 print("The standard deviation of the latecy is: ", np.std(latencies), " ms")
+for i in thro.keys():
+    print("The throughput at second ", str(i), " is ", (msg_size*thro[i])/1000, " KB/s")
+print(thro)
