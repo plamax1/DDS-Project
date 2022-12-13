@@ -8,7 +8,6 @@ import com.rabbitmq.client.DeliverCallback;
 public class Recv {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
-    private final static String bindingKey = "sport.swimming";
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
@@ -20,6 +19,11 @@ public class Recv {
         channel.exchangeDeclare(EXCHANGE_NAME, "topic");
         String queueName = channel.queueDeclare().getQueue();
 
+        
+        //get the environmant variable topic
+        String bindingKey = System.getenv("topic");
+        channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
+        
         channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
 
         System.out.println(" [*] Waiting for messages. To exit press CTRL+C" + " Topic is " + bindingKey);
