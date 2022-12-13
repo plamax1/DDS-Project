@@ -4,27 +4,25 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeoutException;
-
 public class Send {
 
-    private final static String QUEUE_NAME = "hello";
+    private final static String QUEUE_NAME = "topic_queue";
+    private final static String EXCHANGE_NAME = "topic_exchange";
+    private final static String routingKey = "sport.swimming";
+    private final static String message = "Pelphs wins again!";
+
 
     public static void main(String[] argv) throws Exception {
-        work();
-    }
-
-    public static void work() throws IOException, TimeoutException{
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
+
         try (Connection connection = factory.newConnection();
-             Channel channel = connection.createChannel()) {
+                Channel channel = connection.createChannel()) {
+            channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+
+            channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-            String message = "Hello World!";
-            channel.basicPublish("", QUEUE_NAME, null, message.getBytes(StandardCharsets.UTF_8));
-            System.out.println(" [x] Sent '" + message + "'");
+            System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
         }
     }
 }
