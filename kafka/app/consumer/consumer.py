@@ -4,7 +4,7 @@ from time import sleep, time
 from random import randint
 import numpy as np
 import sys
-from monitor import send_latencies
+from monitor import send_latencies, mean_lat
 topic=""
 if(len(sys.argv)<2):
     topic="topic_test"
@@ -49,10 +49,11 @@ for event in consumer:
     if event_counter%100==0:
         send_latencies(groupid, latencies)
         latencies=[]
-    if event_counter>=1000:
+    if event_counter>=10000:
         break
     #sleep(0.1)
 sleep(2)
 for i in thro.keys():
     print("The throughput at second ", str(i), " is ", (msg_size*thro[i])/1000, " KB/s")
-print(thro)
+#print(thro)
+print("The standard deviation of the latecy for consumer ", groupid, " is : ", mean_lat(groupid), " ms")

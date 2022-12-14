@@ -18,5 +18,6 @@ def send_latencies(consumer_id, lat):
         latencies[consumer_id]=lat
 
 def mean_lat(consumer_id):
-    return np.std(latencies[consumer_id])
     #print("The standard deviation of the latecy is: ", np.std(latencies), " ms")
+    return np.std(latencies[consumer_id])
+    
