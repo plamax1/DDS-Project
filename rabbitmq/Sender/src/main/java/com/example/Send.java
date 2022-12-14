@@ -1,5 +1,8 @@
 package com.example;
 
+import java.util.Date;
+
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -23,7 +26,11 @@ public class Send {
             channel.exchangeDeclare(EXCHANGE_NAME, "topic");
 
             for (int i = 0; i < messagesToSend; i++) {
-                channel.basicPublish(EXCHANGE_NAME, bindingKey, null, message.getBytes("UTF-8"));
+
+                AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().timestamp(new Date()).build();
+
+                channel.basicPublish(EXCHANGE_NAME, bindingKey, properties, message.getBytes("UTF-8"));
+
                 channel.queueDeclare(QUEUE_NAME, false, false, false, null);
                 System.out.println(i + "] Sent '" + bindingKey + "':'" + message + "'");
             }
