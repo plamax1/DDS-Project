@@ -8,21 +8,25 @@ public class Send {
 
     private final static String QUEUE_NAME = "topic_queue";
     private final static String EXCHANGE_NAME = "topic_exchange";
-    private final static String routingKey = "sport.swimming";
     private final static String message = "Pelphs wins again!";
-
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
 
+        String bindingKey = System.getenv("topic");
+        int messagesToSend = Integer.parseInt(System.getenv("messagesToSend"));
+
         try (Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel()) {
+
             channel.exchangeDeclare(EXCHANGE_NAME, "topic");
 
-            channel.basicPublish(EXCHANGE_NAME, routingKey, null, message.getBytes("UTF-8"));
-            channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-            System.out.println(" [x] Sent '" + routingKey + "':'" + message + "'");
+            for (int i = 0; i < messagesToSend; i++) {
+                channel.basicPublish(EXCHANGE_NAME, bindingKey, null, message.getBytes("UTF-8"));
+                channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+                System.out.println(i + "] Sent '" + bindingKey + "':'" + message + "'");
+            }
         }
     }
 }
