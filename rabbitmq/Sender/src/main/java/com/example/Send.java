@@ -1,6 +1,7 @@
 package com.example;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -27,12 +28,13 @@ public class Send {
 
             for (int i = 0; i < messagesToSend; i++) {
 
-                AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder().timestamp(new Date()).build();
+                Map<String, Object> messageProperties = new HashMap<>();
+                messageProperties.put("timestamp", System.currentTimeMillis());
 
-                channel.basicPublish(EXCHANGE_NAME, bindingKey, properties, message.getBytes("UTF-8"));
+                channel.basicPublish(EXCHANGE_NAME, bindingKey, new AMQP.BasicProperties.Builder().headers(messageProperties).build(), message.getBytes("UTF-8"));
 
                 channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-                System.out.println(i + "] Sent '" + bindingKey + "':'" + message + "'");
+                System.out.println(messageProperties.get("timestamp") + "] Sent '" + bindingKey + "':'" + message + "'");
             }
         }
     }

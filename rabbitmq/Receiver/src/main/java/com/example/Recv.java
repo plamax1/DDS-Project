@@ -1,7 +1,5 @@
 package com.example;
 
-import java.util.Date;
-
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -34,9 +32,10 @@ public class Recv {
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
 
-            long delay = new Date().getTime() - delivery.getProperties().getTimestamp().getTime();
-            System.out.println("Delay: [" + delay+ " ms]. Received '" +
-                delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
+            long rcvInstant= (long)delivery.getProperties().getHeaders().get("timestamp") ;
+            long delay = System.currentTimeMillis() - rcvInstant;
+            System.out.println("delay:["  + delay + " ms]Received '" +            
+            delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
         };
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
     }
