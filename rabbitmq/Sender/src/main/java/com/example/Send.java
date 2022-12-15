@@ -13,7 +13,7 @@ public class Send {
     private final static String QUEUE_NAME = "topic_queue";
     private final static String EXCHANGE_NAME = "topic_exchange";
     private final static String message = "Pelphs wins again!";
-
+    private final static String endMessage = "end";
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -36,6 +36,10 @@ public class Send {
                 channel.queueDeclare(QUEUE_NAME, false, false, false, null);
                 System.out.println(messageProperties.get("timestamp") + "] Sent '" + bindingKey + "':'" + message + "'");
             }
+
+            //Communicate that the transmission is over sending the endMessage.
+            channel.basicPublish(EXCHANGE_NAME, bindingKey, null, endMessage.getBytes("UTF-8"));
+                channel.queueDeclare(QUEUE_NAME, false, false, false, null);
         }
     }
 }

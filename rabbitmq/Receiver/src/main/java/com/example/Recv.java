@@ -8,6 +8,32 @@ import com.rabbitmq.client.DeliverCallback;
 public class Recv {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
+    private final static String endMessage = "end";
+    private int msgNumber;
+    private int delaySum;
+    public int getDelaySum() {
+        return delaySum;
+    }
+
+    public void setDelaySum(int delaySum) {
+        this.delaySum = delaySum;
+    }
+
+    public void incDelaySum(int delay) {
+        this.delaySum += delay;
+    }
+
+    public int getMsgNumber() {
+        return msgNumber;
+    }
+
+    public void setMsgNumber(int msgNumber) {
+        this.msgNumber = msgNumber;
+    }
+    
+    public void incMsgNumber() {
+        this.msgNumber = msgNumber+1;
+    }
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
@@ -26,17 +52,31 @@ public class Recv {
         
         channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
 
-        System.out.println(" [*] Waiting for messages. To exit press CTRL+C" + " Topic is " + bindingKey);
+        Recv r = new Recv();
+        r.setMsgNumber(0);
+        r.setDelaySum(0);
+        System.out.println("[*] Waiting for messages. Topic is " + bindingKey + ". To exit press CTRL+C.");
 
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
-
+            
+            if(!message.equals(endMessage)){
             long rcvInstant= (long)delivery.getProperties().getHeaders().get("timestamp") ;
             long delay = System.currentTimeMillis() - rcvInstant;
-            System.out.println("delay:["  + delay + " ms]Received '" +            
+            System.out.println(r.getMsgNumber() + "] Delay:["  + delay + " ms]Received '" +            
             delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
+            r.incMsgNumber();
+            r.incDelaySum((int) delay);
+            }
+            else{
+                float avgDelay=r.getDelaySum() / r.getMsgNumber();
+                System.out.println(endMessage + " RECEIVED! The average delay is " + avgDelay);
+                r.setDelaySum(0);
+                r.setMsgNumber(0);
+            }
         };
+
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> { });
     }
 }
