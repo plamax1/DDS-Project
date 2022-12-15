@@ -47,3 +47,23 @@ bash script.sh
 ```
 
 this will lauch only consumers and not producer
+
+## RabbitMQ Service
+A topic exchange is used. So it is important to follow the topic routing key format, see [rabbitmq topic page](https://www.rabbitmq.com/tutorials/tutorial-five-java.html).
+### Start the broker
+```bash
+cd rabbitmq/Broker
+docker-compose up --build 
+```
+### Start the Consumers
+```bash
+cd rabbitmq/Receiver
+./receiver_script.sh
+```
+Insert the topic a Consumer should be listening on, and the number of consumer to run with this instruction.
+### Start the Producer
+```bash
+cd rabbitmq/Sender
+./sender_script.sh
+```
+Insert the topic of the messages to produce, and the number of messages to send.
