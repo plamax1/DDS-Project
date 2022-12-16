@@ -22,32 +22,38 @@ public class Producer {
         String bindingKey = getTopic();
         int messagesToSend = getMessageToSend();
         String message = getMessageString();
-
         try (Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel()) {
 
             channel.exchangeDeclare(EXCHANGE_NAME, "topic");
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
             
+            long lasttime=System.currentTimeMillis();
+            long startTime=lasttime;
+
+            long timestamp=0;
             for (int i = 0; i < messagesToSend; i++) {
 
+                timestamp=System.currentTimeMillis();
                 //create a new message property containing the timestamp
-                Map<String, Object> messageProperties = messageTimestamp();
+                Map<String, Object> messageProperties = messageTimestamp(timestamp);
 
                 channel.basicPublish(EXCHANGE_NAME, bindingKey, new AMQP.BasicProperties.Builder().headers(messageProperties).build(), message.getBytes("UTF-8"));
 
-                System.out.println(messageProperties.get("timestamp") + "] Sent '" + bindingKey + "':'" + message + "'");
+                System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + message + "'");
+                lasttime=timestamp;
             }
 
             //Communicate that the transmission is over sending the endMessage.
             channel.basicPublish(EXCHANGE_NAME, bindingKey, null, endMessage.getBytes("UTF-8"));
-                channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
+            System.out.println("Transmission ended. It requires " + (System.currentTimeMillis() - startTime) + "ms to send " + messagesToSend + " messages.");
         }
     }
 
-    private static Map<String, Object> messageTimestamp(){
+    private static Map<String, Object> messageTimestamp(long timestamp){
         Map<String, Object> messageProperties = new HashMap<>();
-        messageProperties.put("timestamp", System.currentTimeMillis());
+        messageProperties.put("timestamp", timestamp);
         return messageProperties;
     }
 
