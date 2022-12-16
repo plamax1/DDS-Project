@@ -1,97 +1,109 @@
 package com.example;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.Delivery;
 
 public class Recv {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
-    private final static String endMessage = "end";
-    private int msgNumber;
-    private int delaySum;
-    private long startTransmissionTime;
+    private final static String endMessage = "end"; // must be the same declared on sender side.
+    private static Channel channel;
+    private static Stat stat;
 
-    public long getStartTransmissionTime() {
-        return startTransmissionTime;
+    public static Channel getChannel() {
+        return channel;
     }
 
-    public void setStartTransmissionTime(long startTransmissionTime) {
-        this.startTransmissionTime = startTransmissionTime;
+    public static Stat getStat() {
+        return stat;
     }
 
-    public int getDelaySum() {
-        return delaySum;
+    public static void setStat(Stat stat) {
+        Recv.stat = stat;
     }
 
-    public void setDelaySum(int delaySum) {
-        this.delaySum = delaySum;
-    }
-
-    public void incDelaySum(int delay) {
-        this.delaySum += delay;
-    }
-
-    public int getMsgNumber() {
-        return msgNumber;
-    }
-
-    public void setMsgNumber(int msgNumber) {
-        this.msgNumber = msgNumber;
-    }
-
-    public void incMsgNumber() {
-        this.msgNumber = msgNumber + 1;
+    public static void setChannel(Channel channel) {
+        Recv.channel = channel;
     }
 
     public static void main(String[] argv) throws Exception {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        Connection connection = factory.newConnection();
-        Channel channel = connection.createChannel();
+        establishChannel();
 
         // connect to the exchanger and get the queue name
-        channel.exchangeDeclare(EXCHANGE_NAME, "topic");
+        getChannel().exchangeDeclare(EXCHANGE_NAME, "topic");
         String queueName = channel.queueDeclare().getQueue();
 
         // get the environmant variable topic
         String bindingKey = System.getenv("topic");
-        channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
+        getChannel().queueBind(queueName, EXCHANGE_NAME, bindingKey);
 
-        channel.queueBind(queueName, EXCHANGE_NAME, bindingKey);
+        // instantiate the object for the statistics on trasmission
+        setStat(new Stat());
 
-        Recv r = new Recv();
-        r.setMsgNumber(0);
-        r.setDelaySum(0);
-        System.out.println("[*] Waiting for messages. Topic is " + bindingKey + ". To exit press CTRL+C.");
+        System.out.println("Waiting for messages. Topic is " + bindingKey + ". To exit press CTRL+C.");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
 
             if (!message.equals(endMessage)) {
-                long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
-                long delay = System.currentTimeMillis() - rcvInstant;
-                System.out.println(r.getMsgNumber() + "] Delay:[" + delay + " ms]Received '" +
-                        delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
-                r.incMsgNumber();
-                r.incDelaySum((int) delay);
+                printAndUpdateStat(delivery, message);
             } else {
-                float avgDelay = (float)(((float)r.getDelaySum()) / ((float)r.getMsgNumber()));
-                long endTime = System.currentTimeMillis();
-                System.out.println(endMessage + " RECEIVED! The average delay is " + avgDelay + "ms.");
-                long difference = endTime - r.getStartTransmissionTime();
-                float throughput = (float)( (float)r.getMsgNumber() / (float)((float)1000 * (difference)));
-                System.out.println("You received " + r.getMsgNumber() + " messages in " + difference + "ms. So you received " + Math.pow(throughput, -1) +" messages per second.");
-                r.setDelaySum(0);
-                r.setMsgNumber(0);
+                // endMessage received
+                computeFinalStat();
             }
-            if (r.getMsgNumber() == 1) {
-                r.setStartTransmissionTime(System.currentTimeMillis());
+            if (getStat().getMsgNumber() == 1) {
+                getStat().setStartTransmissionTime(System.currentTimeMillis());
             }
         };
 
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
+
         });
+    }
+
+    public static void establishChannel() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        Connection connection = factory.newConnection();
+        Channel channel = connection.createChannel();
+        setChannel(channel);
+    }
+
+    public static void printAndUpdateStat(Delivery delivery, String message) {
+        Stat stat = getStat();
+        try{
+        long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
+        long delay = System.currentTimeMillis() - rcvInstant;
+        System.out.println(getStat().getMsgNumber() + "] Delay:[" + delay + " ms] Received '" +
+                delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
+        stat.incMsgNumber();
+        stat.incDelaySum((int) delay);
+        }
+        catch(NullPointerException e){
+            System.out.println("Message does not contain the param timestamp!!");
+        }
+    }
+
+    public static void computeFinalStat() {
+        Stat stat = getStat();
+
+        // Print average
+        float avgDelay = stat.computeAverageDelay();
+        System.out.println(endMessage + " RECEIVED! The average delay is " + avgDelay + "ms.");
+
+        // Print msg/s
+        long difference = stat.computeTimeDifference();
+        float throughput = stat.computeThroughput(difference);
+        System.out.println("You received " + stat.getMsgNumber() + " messages in " + difference
+                + "ms. So you received " + Math.pow(throughput, -1) + " messages/s.");
+
+        // keep listening, so restart Stat
+        setStat(new Stat());
     }
 }
