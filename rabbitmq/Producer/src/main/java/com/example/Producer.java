@@ -7,7 +7,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-public class Send {
+public class Producer {
 
     private final static String QUEUE_NAME = "topic_queue";
     private final static String EXCHANGE_NAME = "topic_exchange";

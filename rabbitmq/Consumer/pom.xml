@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.example</groupId>
-  <artifactId>sender</artifactId>
+  <artifactId>consumer</artifactId>
   <version>1.0-SNAPSHOT</version>
 
 
-  <name>sender</name>
+  <name>consumer</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -49,7 +49,7 @@
       <artifactId>exec-maven-plugin</artifactId>
       <version>3.1.0</version>
       <configuration>
-        <mainClass>com.example.Send</mainClass>
+        <mainClass>com.example.Consumer</mainClass>
       </configuration>
     </plugin>
   </plugins>

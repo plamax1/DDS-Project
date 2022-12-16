@@ -9,7 +9,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 import com.rabbitmq.client.Delivery;
 
-public class Recv {
+public class Consumer {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
     private final static String endMessage = "end"; // must be the same declared on sender side.
@@ -25,11 +25,11 @@ public class Recv {
     }
 
     public static void setStat(Stat stat) {
-        Recv.stat = stat;
+        Consumer.stat = stat;
     }
 
     public static void setChannel(Channel channel) {
-        Recv.channel = channel;
+        Consumer.channel = channel;
     }
 
     public static void main(String[] argv) throws Exception {
