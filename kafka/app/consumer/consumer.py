@@ -33,7 +33,6 @@ thro={}
 # Event loop
 msg_size =0
 for event in consumer:
-    msg_size = sys.getsizeof(event)
     event_counter+=1
     event_data = event.value
     # Do whatever you want
@@ -45,15 +44,17 @@ for event in consumer:
     else:
         thro[sec]=0
     latencies.append(int(lat))
-    print(event_data, "Latency: " , lat)
+    #print(event_data, "Latency: " , lat)
     if event_counter%100==0:
         send_latencies(groupid, latencies)
         latencies=[]
-    if event_counter>=10000:
+    if event_counter>=100000:
         break
     #sleep(0.1)
 sleep(2)
+coll=0
 for i in thro.keys():
-    print("The throughput at second ", str(i), " is ", (msg_size*thro[i])/1000, " KB/s")
+    coll+=thro[i]
+print("The mean throughput is ", coll/len(thro.keys()), "msg/s")
 #print(thro)
-print("The standard deviation of the latecy for consumer ", groupid, " is : ", mean_lat(groupid), " ms")
+print("The mean of the latecy for consumer ", groupid, " is : ", mean_lat(groupid), " ms")

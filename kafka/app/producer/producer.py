@@ -18,13 +18,13 @@ producer = KafkaProducer(
 )
 sleeps= generate_poisson(lampda, n_mes)
 for j in range(len(sleeps)+1):
-#for j in range(10000):
-    print("Iteration", j)
+#for j in range(100000):
+    #print("Iteration", j)
     data = {'counter-live': j}
     producer.send(topic, value=data, timestamp_ms = round(time()*1000))
-    producer.flush()
     try:
-        sleep(sleeps[j])
+       sleep(sleeps[j])
         #sleep(0)
     except IndexError:
           print("All messages have been sent")
+producer.flush()
