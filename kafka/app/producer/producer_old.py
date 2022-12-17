@@ -23,16 +23,20 @@ print("Sleeps lenght: ", len(sleeps))
 print("Sleeps vector sum lenght: ", np.sum(sleeps))
 start = round(time()*1000)
 slp=0
-j=0
-target_time=0
-while j<len(sleeps):
-    if(time()*1000>target_time):
-        data = {'counter-live': j}
-        producer.send("topic_1", value=data, timestamp_ms = round(time()*1000))
-        target_time=time()*1000+sleeps[j]*1000
-        j+=1
-        #print("Message ", data)
+for j in range(len(sleeps)):
+#for j in range(len(sleeps)+1):
+#for j in range(100000):
+    #print("Iteration", j)
+    data = {'counter-live': j}
+    producer.send(topic, value=data, timestamp_ms = round(time()*1000))
+    try:
+        sleep(sleeps[j])
+    #sleep(sleeps[j])
+        slp+=sleeps[j]
+    #    #sleep(0)
+    except IndexError:
+        print("All messages have been sent")
 producer.flush()
 finish = round(time()*1000)
 print("Time to execute: ", (finish-start)/1000, " sec")
-#print("Sleep time : ", slp, " sec")
+print("Sleep time : ", slp, " sec")
