@@ -1,0 +1,14 @@
+*.tmp
+tmp/**
+bin/**
+target/**
+*.jar
+*.war
+*.class
+*.pydevproject
+.project
+.metadata
+.classpath
+.settings/
+.loadpath
+local.properties
