@@ -7,6 +7,7 @@ services:
   kafka:
     depends_on:
      - zookeeper
+    restart: "on-failure"
     image: wurstmeister/kafka
     ports:
      - "9092:9092"
