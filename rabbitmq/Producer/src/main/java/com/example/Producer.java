@@ -35,6 +35,8 @@ public class Producer {
             long startTime = lasttime;
             long timestamp = 0;
             String poisson= System.getenv("poisson");
+            
+            //don't use poisson
             if (poisson.equals("N") || poisson == null) {
                 for (int i = 0; i < messagesToSend; i++) {
 
@@ -50,6 +52,7 @@ public class Producer {
                     lasttime = timestamp;
                 }
             }
+            //use poisson
             else{
                 ArrayList<Double> sleeps = poisson(Integer.parseInt(poisson), messagesToSend);
                 for(int i=0; i < messagesToSend; i++){
@@ -62,7 +65,7 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             message.getBytes("UTF-8"));
 
-                    System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + message + "'");
+                    System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + message + "'");
                     lasttime = timestamp;
                 }
             }
