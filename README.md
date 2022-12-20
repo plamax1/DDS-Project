@@ -61,9 +61,12 @@ cd rabbitmq/Consumer
 ./consumer_script.sh
 ```
 Insert the topic a Consumer should be listening on, and the number of consumer to run with this instruction.
-### Start the Producer
+After creation, consumers remains active and listening.
+### Start the Producers
 ```bash
-cd rabbitmq/Consumer
-./consumer_script.sh
+cd rabbitmq/Producer
+./producer_script.sh
 ```
-Insert the topic of the messages to produce, and the number of messages to send.
+Insert the topic and the content of the messages to produce, and the number of messages to send.
+Choose also if you want to send messages in a continuous loop or with pause following a poisson distribution (insert lambda value).
+When the job is finished, the producer stops execution.
