@@ -50,7 +50,7 @@ public class Stat {
         return System.currentTimeMillis() - getStartTransmissionTime();
     }
 
-    public float computeThroughput(long difference){
-        return (float) ((float) getMsgNumber() / (float) ((float) 1000 * (difference)));
+    public float computeMessageRate(long difference){
+        return ((float)this.getMsgNumber())*1000/((float)difference);
     }
 }

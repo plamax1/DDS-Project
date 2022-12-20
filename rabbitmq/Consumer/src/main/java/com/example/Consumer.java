@@ -99,9 +99,9 @@ public class Consumer {
 
         // Print msg/s
         long difference = stat.computeTimeDifference();
-        float throughput = stat.computeThroughput(difference);
+        float msgRate = stat.computeMessageRate(difference);
         System.out.println("You received " + stat.getMsgNumber() + " messages in " + difference
-                + "ms. So you received " + Math.pow(throughput, -1) + " messages/s.");
+                + "ms. So you received " + String.format("%.02f", msgRate) + " messages/s.");
 
         // keep listening, so restart Stat
         setStat(new Stat());
