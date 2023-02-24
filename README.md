@@ -2,7 +2,7 @@
  DDS-Project2223
 Comparison and a performance evaluation of three solutions implementing the publisher-subscriber message pattern.
 ## Kafka Service
-### Start zookeeper and the broker
+### Start Kafka Background
 
 ```bash
 cd kafka/zookeeper_kafka
@@ -16,7 +16,7 @@ You can start n_producers sending messages on the same topic
 cd kafka/app
 bash producer_script.sh -topic -n_producers -msg_rate -num_msgs
 ```
-###
+### Consumer
 You can start n_consumers sending listening on the same topic
 
 ```bash
