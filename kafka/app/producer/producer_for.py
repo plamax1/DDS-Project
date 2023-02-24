@@ -4,6 +4,7 @@ from kafka import KafkaProducer
 from utils import generate_poisson
 import sys
 import numpy as np
+END_CODE="end_msg"
 if len(sys.argv)<4:
     print("Missing topic and number of messages")
     print("Usage : consumer topicname message_rate n_messages")

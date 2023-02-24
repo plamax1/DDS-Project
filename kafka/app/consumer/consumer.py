@@ -6,6 +6,7 @@ import numpy as np
 import sys
 from monitor import send_latencies, mean_lat
 topic=""
+END_CODE = "end_msg"
 
 if(len(sys.argv)<3):
     topic="topic_test"
@@ -37,7 +38,6 @@ thro={}
 msg_size =0
 
 for event in consumer:
-    event_counter+=1
     event_data = event.value
     #print(event_data)
 
@@ -54,7 +54,7 @@ for event in consumer:
     if event_counter%100==0:
         send_latencies(groupid, latencies)
         latencies=[]
-    if event_counter>=n_msg:
+    if event_data == END_CODE:
         break
     #sleep(0.1)
 sleep(2)
