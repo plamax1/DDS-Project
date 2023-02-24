@@ -1,6 +1,6 @@
 #! /bin/sh
 # Info
-# USAGE: cunsumer_script.sh -topic -n_consumers
+# USAGE: consumer_script.sh -topic -n_consumers
 
 #build the consumer container
 docker build ./consumer -t consumer
