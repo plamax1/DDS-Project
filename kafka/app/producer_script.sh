@@ -1,30 +1,13 @@
 #! /bin/sh
-#build the consumer container
+# Info
+# USAGE: producer_script.sh -topic -n_producers -msg_rate -num_msgs
+
+#build the producer container
 docker build ./producer -t producer
-TOPIC1="topic_1"
-TOPIC2="topic_2"
-TOPIC3="topic_3"
-TOPIC4="topic_4"
-for i in {1..1}
+
+for i in {1..$2}
 do
-    docker run -d --network host  producer $TOPIC1 100000 1000000
-    echo "Producer number $i running and sending messages on topic $TOPIC1"
+    docker run -d --network host  producer $1 $2 $3
+    echo "Producer number $i running and sending messages on topic $1"
     done
 
-for i in {1..1}
-do
-    docker run -d --network host  producer $TOPIC2 100000 1000000
-    echo "Producer number $i running and sending messages on topic $TOPIC2"
-    done
-
-for i in {1..1}
-do
-    docker run -d --network host  producer $TOPIC3 100000 1000000
-    echo "Producer number $i running and sending messages on topic $TOPIC3"
-    done
-
-for i in {1..1}
-do
-    docker run -d --network host  producer $TOPIC4 100000 1000000
-    echo "Producer number $i running and sending messages on topic $TOPIC4"
-    done
