@@ -8,16 +8,17 @@ from monitor import send_latencies, mean_lat
 topic=""
 END_CODE = "end_msg"
 
-if(len(sys.argv)<3):
-    topic="topic_test"
-    n_msg=100000
-else:
-    topic= sys.argv[1].strip()
-    n_msg=int(sys.argv[2].strip())
-
+if len(sys.argv)<2:
+    print("Missing arguments")
+    print("Usage : python consumer.py -topicname")
+    exit(0)
+#Args
+topic= sys.argv[1].strip()
 
 latencies = []
+#Generate random consumer id
 groupid=str(randint(100000000,999999999))
+#Consumer instantiation
 consumer = KafkaConsumer(
     topic,
     bootstrap_servers=['localhost:9092'],
@@ -28,7 +29,6 @@ consumer = KafkaConsumer(
 )
 print("Consumer id: " , groupid, " listening on topic-", topic,"-")
 event_counter=0;
-print("Prova")
 #dummy poll 
 consumer.poll()
 #go to end of the stream
@@ -41,7 +41,6 @@ for event in consumer:
     event_data = event.value
     #print(event_data)
 
-    # Do whatever you want
     lat= round(time()*1000) - event.timestamp;
     sec=round(time())
    #[if_true] if [expression] else [if_false]
@@ -57,7 +56,6 @@ for event in consumer:
     if event_data == END_CODE:
         break
     #sleep(0.1)
-sleep(2)
 coll=0
 for i in thro.keys():
     coll+=thro[i]
