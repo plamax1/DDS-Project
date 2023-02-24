@@ -7,8 +7,24 @@ TOPIC3="topic_3"
 TOPIC4="topic_4"
 for i in {1..1}
 do
-    docker run --network host  producer $TOPIC1 100 1000
+    docker run -d --network host  producer $TOPIC1 100000 1000000
     echo "Producer number $i running and sending messages on topic $TOPIC1"
     done
 
+for i in {1..1}
+do
+    docker run -d --network host  producer $TOPIC2 100000 1000000
+    echo "Producer number $i running and sending messages on topic $TOPIC2"
+    done
 
+for i in {1..1}
+do
+    docker run -d --network host  producer $TOPIC3 100000 1000000
+    echo "Producer number $i running and sending messages on topic $TOPIC3"
+    done
+
+for i in {1..1}
+do
+    docker run -d --network host  producer $TOPIC4 100000 1000000
+    echo "Producer number $i running and sending messages on topic $TOPIC4"
+    done
