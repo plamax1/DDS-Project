@@ -29,13 +29,18 @@ sleeps= generate_poisson(lampda, n_mes+1)
 
 #Producer loop
 j=0
+target_time=0
+print('sleep len: ', len(sleeps))
+print('sleep duration', np.sum(sleeps))
 while j<len(sleeps):
-    data = {'counter-live': j}
-    producer.send(topic, value=data, timestamp_ms = round(time()*1000))
-    j+=1
-    #print("Message ", data)
+    if(time()*1000>target_time):
+        #print('in if')
+        data = {'counter-live': j}
+        producer.send(topic, value=data, timestamp_ms = round(time()*1000))
+        target_time=time()*1000+sleeps[j]*1000
+        j+=1
+    
 producer.send(topic, value=END_CODE, timestamp_ms = round(time()*1000))
-
 producer.flush()
 #print("Time to execute: ", (finish-start)/1000, " sec")
 #print("Sleep time : ", slp, " sec")
