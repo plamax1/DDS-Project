@@ -5,9 +5,9 @@
 #build the producer container
 docker build ./producer -t producer
 
-for i in {1..$2}
+for (( i = 0; i < $2; i++ ))
 do
     docker run -d --network host  producer $1 $2 $3
     echo "Producer number $i running and sending messages on topic $1"
-    done
+done
 

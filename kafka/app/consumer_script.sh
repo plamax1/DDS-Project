@@ -6,8 +6,8 @@
 docker build ./consumer -t consumer
 TOPIC1=$1
 
-for i in {1..$2}
+for (( i = 0; i < $2; i++ )) 
 do 
-    docker run --network host  consumer $1 
+    docker run --network host -d consumer $1 
     echo "Consumer number $i running and listening on topic $1"
 done
