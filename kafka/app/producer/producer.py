@@ -36,6 +36,7 @@ while j<len(sleeps):
     if(time()*1000>target_time):
         #print('in if')
         data = {'counter-live': j}
+        #print(data)
         producer.send(topic, value=data, timestamp_ms = round(time()*1000))
         target_time=time()*1000+sleeps[j]*1000
         j+=1
