@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="656b166e-d18b-45fe-af66-d26f27b79f01" name="Changes" comment="" />
+    <list default="true" id="656b166e-d18b-45fe-af66-d26f27b79f01" name="Changes" comment="ActiveMQ">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DDS-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DDS-Project.iml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -23,7 +27,9 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/nojano/IdeaProjects/DDS-Project",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -36,10 +42,30 @@
       <option name="presentableId" value="Default" />
       <updated>1670250206156</updated>
       <workItem from="1670250208750" duration="37000" />
+      <workItem from="1670250342362" duration="124000" />
+      <workItem from="1670250513281" duration="26000" />
+      <workItem from="1670251208492" duration="79000" />
+      <workItem from="1670251632377" duration="82000" />
+      <workItem from="1670252155181" duration="146000" />
+      <workItem from="1670253069722" duration="296000" />
+      <workItem from="1670255561977" duration="10000" />
+      <workItem from="1677665789520" duration="116000" />
     </task>
+    <task id="LOCAL-00001" summary="ActiveMQ">
+      <created>1670250457721</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1670250457721</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="ActiveMQ" />
+    <option name="LAST_COMMIT_MESSAGE" value="ActiveMQ" />
   </component>
 </project>
