@@ -1,0 +1,2 @@
+1. Go to "docker active MQ" and run the command "docker-compose up" (sudo if it is needed);
+2. Go to "producer and consumer" and run first the consumer script (if you need to see the consumers running, you need to use the "docker attach" command in order to see them) and then the producer one.
