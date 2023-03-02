@@ -1,6 +1,29 @@
 # DDS-Project
  DDS-Project2223
 Comparison and a performance evaluation of three solutions implementing the publisher-subscriber message pattern.
+## ActiveMQ Service
+### Start ActiveMQ Background
+```bash
+cd active\ MQ/docker\ active\ MQ
+docker-compose up 
+```
+### Consumer
+It is recommended to instatiate first the consumers, then the producers.
+
+```bash
+cd active\ MQ/producer\ and\ consumer
+bash script_consumer.sh
+```
+Then follow the instructions on the command line.
+### Producer
+```bash
+cd active\ MQ/producer\ and\ consumer
+bash script_producer.sh
+```
+Then follow the instructions on the command line.
+
+
+
 ## Kafka Service
 ### Start Kafka Background
 
