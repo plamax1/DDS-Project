@@ -57,7 +57,7 @@ for event in consumer:
         send_latencies(groupid, latencies)
         latencies=[]
     if event_data == END_CODE:
-        print("The mean throughput is ", counter/((event.timestamp-first_message_timestamp)*1000), "msg/s")
+        print("The mean throughput is ", counter*1000/((event.timestamp-first_message_timestamp)), "msg/s")
         break
     #sleep(0.1)
 coll=0

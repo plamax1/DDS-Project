@@ -35,8 +35,8 @@ print('sleep duration', np.sum(sleeps))
 while j<len(sleeps):
     if(time()*1000>target_time):
         #print('in if')
-        data = {'hello'}
-        #print(data)
+        data = 'hello'
+        #print(data+str(j))
         producer.send(topic, value=data, timestamp_ms = round(time()*1000))
         target_time=time()*1000+sleeps[j]*1000
         j+=1
