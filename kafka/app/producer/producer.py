@@ -4,7 +4,7 @@ from kafka import KafkaProducer
 from utils import generate_poisson
 import sys
 import numpy as np
-END_CODE="end_msg"
+END_CODE="end"
 
 #Args 
 
@@ -35,7 +35,7 @@ print('sleep duration', np.sum(sleeps))
 while j<len(sleeps):
     if(time()*1000>target_time):
         #print('in if')
-        data = {'counter-live': j}
+        data = {'hello'}
         #print(data)
         producer.send(topic, value=data, timestamp_ms = round(time()*1000))
         target_time=time()*1000+sleeps[j]*1000

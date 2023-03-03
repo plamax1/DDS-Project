@@ -6,7 +6,7 @@ import numpy as np
 import sys
 from monitor import send_latencies, mean_lat
 topic=""
-END_CODE = "end_msg"
+END_CODE = "end"
 
 if len(sys.argv)<2:
     print("Missing arguments")

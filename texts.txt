@@ -1,0 +1,37 @@
+Constant Rate, increasing number of consumers
+
+Kafka
+
+#2 consumer, rate = 5000 msg/sec, 1 producer
+Result: avg thr: 3124.02 #1    
+         avg lat: 11.71 ms
+Result: avg thr: 3124.02 #2
+         avg lat: 11.40 ms 
+
+#4 consumer, rate = 5000 msg/sec, 1 producer
+Result: avg thr: 2940.19 #1    
+         avg lat: 10.52 ms
+Result: avg thr: 2940.19 #2
+         avg lat: 11.37 ms 
+Result: avg thr: 2883.63 #3    
+         avg lat: 11.11 ms
+Result: avg thr: 2883.63 #4
+         avg lat: 11.15 ms 
+
+#8 consumer, rate = 5000 msg/sec, 1 producer
+Result: avg thr: 2499.01 #1    
+         avg lat: 13.75 ms
+Result: avg thr: 2499.01 #2
+         avg lat: 13.93 ms 
+Result: avg thr: 2499.01 #3    
+         avg lat: 14.15 ms
+Result: avg thr: 2499.01 #4
+         avg lat: 14.15 ms 
+Result: avg thr: 2499.01 #5    
+         avg lat: 13.23 ms
+Result: avg thr: 2499.01 #6
+         avg lat: 13.29 ms 
+Result: avg thr: 2499.01 #7    
+         avg lat: 13.26 ms
+Result: avg thr: 2499.01 #8
+         avg lat: 14.49 ms 
