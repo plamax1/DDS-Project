@@ -1,5 +1,6 @@
 package com.example;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ public class Producer {
     private final static String QUEUE_NAME = "topic_queue";
     private final static String EXCHANGE_NAME = "topic_exchange";
     private final static String DEF_TOPIC = "sport.swimming";
-    private final static String DEF_MESSAGE_STRING = "Pelphs wins again!";
+    private final static String DEF_MESSAGE_STRING = "Hello";
     private final static String endMessage = "end";
 
     public static void main(String[] argv) throws Exception {
@@ -24,7 +25,6 @@ public class Producer {
 
         String bindingKey = getTopic();
         int messagesToSend = getMessageToSend();
-        String message = getMessageString();
         try (Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel()) {
 
@@ -34,8 +34,11 @@ public class Producer {
             long lasttime = System.currentTimeMillis();
             long startTime = lasttime;
             long timestamp = 0;
-            String poisson= System.getenv("poisson");
-            
+
+            String poisson = System.getenv("poisson");
+            long rate = getMessageRate(poisson);
+            byte [] messageContent = toByteArray(); //rabbitmq needs a byte[] message content
+
             //don't use poisson
             if (poisson.equals("N") || poisson == null) {
                 for (int i = 0; i < messagesToSend; i++) {
@@ -46,10 +49,11 @@ public class Producer {
 
                     channel.basicPublish(EXCHANGE_NAME, bindingKey,
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
-                            message.getBytes("UTF-8"));
+                            messageContent);
 
                     System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + message + "'");
                     lasttime = timestamp;
+                    Thread.sleep(rate);
                 }
             }
             //use poisson
@@ -63,7 +67,7 @@ public class Producer {
 
                     channel.basicPublish(EXCHANGE_NAME, bindingKey,
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
-                            message.getBytes("UTF-8"));
+                            messageContent);
 
                     System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + message + "'");
                     lasttime = timestamp;
@@ -102,14 +106,22 @@ public class Producer {
         return Integer.parseInt(System.getenv("messagesToSend"));
     }
 
-    private static String getMessageString() {
-        String message = System.getenv("messageContent");
-        if (message == null || message.equals((String) "")) {
-            System.out.println("Environment variable 'message' not found. Sending the default message: '"
-                    + DEF_MESSAGE_STRING + "'.");
-            return DEF_MESSAGE_STRING;
+
+    private static long getMessageRate(String poisson) {
+        if(poisson.equals("N")){ //use rate only if not using poisson
+
+        String messageRate = System.getenv("rate"); //if rate is not valid
+        if (messageRate == null || messageRate.equals((String) "")) {
+            System.out.println("Environment variable 'messagesToSend' not found. Sending messages without delays.");
+            return 0;
         }
-        return message;
+        int msgMin = Integer.parseInt(System.getenv("messagesToSend"));
+        int msgMillis = msgMin/(60*60*60*60);
+        long delay = (long)((long)1/(long)msgMillis); //delay in milliseconds between 2 messages
+        System.out.println("Delay between two messages set to " + delay + "ms.");
+        return delay; 
+    }
+    else return -1;
     }
 
     public static ArrayList<Double> poisson(int lampda, int n) {
@@ -128,5 +140,9 @@ public class Producer {
             sleeps.add(events.get(i) - events.get(i - 1));
         }
         return sleeps;
+    }
+
+    public static byte[] toByteArray() throws UnsupportedEncodingException{
+        return DEF_MESSAGE_STRING.getBytes("UTF-8");
     }
 }
