@@ -12,12 +12,13 @@ do
     export topic=$topic
     read -p "How many messages should it send about $topic? : " messagesToSend
     export messagesToSend=$messagesToSend
-    read -p "What is the message to send [$topic]? : " messageContent
-    export messageContent=$messageContent
     read -p "Wanna use the poisson rate? (N or [int value]) : " poisson
     export poisson=$poisson
+    read -p "OTHERWISE insert the message rate (msg/min) :" rate
+    export rate=$rate
+
     
-    docker run -d --network host -e topic -e messagesToSend -e messageContent -e poisson producer:1.0
+    docker run -d --network host -e topic -e messagesToSend -e poisson -e rate producer:1.0
     echo "Producer number $t running and producing $messagesToSend on topic $topic"
     
     read -p "Need more producer to generate? (Y/N): " go

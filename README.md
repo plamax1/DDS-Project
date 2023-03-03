@@ -1,6 +1,29 @@
 # DDS-Project
  DDS-Project2223
 Comparison and a performance evaluation of three solutions implementing the publisher-subscriber message pattern.
+## ActiveMQ Service
+### Start ActiveMQ Background
+```bash
+cd active\ MQ/docker\ active\ MQ
+docker-compose up 
+```
+### Consumer
+It is recommended to instatiate first the consumers, then the producers.
+
+```bash
+cd active\ MQ/producer\ and\ consumer
+bash script_consumer.sh
+```
+Then follow the instructions on the command line.
+### Producer
+```bash
+cd active\ MQ/producer\ and\ consumer
+bash script_producer.sh
+```
+Then follow the instructions on the command line.
+
+
+
 ## Kafka Service
 ### Start Kafka Background
 
@@ -44,6 +67,8 @@ After creation, consumers remains active and listening.
 cd rabbitmq/Producer
 ./producer_script.sh
 ```
-Insert the topic and the content of the messages to produce, and the number of messages to send.
-Choose also if you want to send messages in a continuous loop or with pause following a poisson distribution (insert lambda value).
-When the job is finished, the producer stops execution.
+Insert the topic and the number of messages to send. The message content is "Hello".
+Then choose, for each producer, whether you want to use a poisson distribution message delays (enter the lambda value). 
+If you entered "N" for the poisson distribution, you can specify a constant delay between the messages (msg/min).
+When the job is finished, the producer sends a message with "end" content and stops execution.
+Consumers receives that message and prints a short statistics.
