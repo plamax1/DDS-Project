@@ -53,14 +53,14 @@ public class Producer {
 
                     System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     lasttime = timestamp;
-                    Thread.sleep(rate);
+                    sendWait(timestamp, rate);
                 }
             }
             //use poisson
             else{
                 ArrayList<Double> sleeps = poisson(Integer.parseInt(poisson), messagesToSend);
                 for(int i=0; i < messagesToSend; i++){
-                    Thread.sleep(Math.round(sleeps.get(i))*1000);
+                    
                     timestamp = System.currentTimeMillis();
                     // create a new message property containing the timestamp
                     Map<String, Object> messageProperties = messageTimestamp(timestamp);
@@ -71,6 +71,8 @@ public class Producer {
 
                     System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     lasttime = timestamp;
+                    sendWait(timestamp, Math.round(sleeps.get(i))*1000);
+
                 }
             }
 
@@ -94,7 +96,7 @@ public class Producer {
             System.out.println("Environment variable 'topic' not found. Listening on the default [" + DEF_TOPIC + "].");
             return DEF_TOPIC;
         }
-        
+
         return topic;
     }
 
@@ -141,6 +143,13 @@ public class Producer {
             sleeps.add(events.get(i) - events.get(i - 1));
         }
         return sleeps;
+    }
+
+    public static void sendWait(long startTime, long waitTime){
+        long target = startTime + waitTime;
+        while(System.currentTimeMillis() < target){
+
+        }
     }
 
     public static byte[] toByteArray() throws UnsupportedEncodingException{
