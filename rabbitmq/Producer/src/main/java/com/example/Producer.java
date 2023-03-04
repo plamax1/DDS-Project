@@ -51,7 +51,7 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + message + "'");
+                    System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     lasttime = timestamp;
                     Thread.sleep(rate);
                 }
@@ -69,7 +69,7 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + message + "'");
+                    System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     lasttime = timestamp;
                 }
             }
@@ -94,6 +94,7 @@ public class Producer {
             System.out.println("Environment variable 'topic' not found. Listening on the default [" + DEF_TOPIC + "].");
             return DEF_TOPIC;
         }
+        
         return topic;
     }
 
