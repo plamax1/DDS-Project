@@ -1,7 +1,7 @@
 #! /bin/bash
 #build the producer container
 
-docker build -t producer:1.0 .
+docker build -t producer:1.0 ./Producer
 
 i=0;
 t=0;

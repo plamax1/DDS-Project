@@ -57,14 +57,14 @@ docker-compose up --build
 ```
 ### Start the Consumers
 ```bash
-cd rabbitmq/Consumer
+cd rabbitmq
 ./consumer_script.sh
 ```
 Insert the topic a Consumer should be listening on, and the number of consumer to run with this instruction.
 After creation, consumers remains active and listening.
 ### Start the Producers
 ```bash
-cd rabbitmq/Producer
+cd rabbitmq
 ./producer_script.sh
 ```
 Insert the topic and the number of messages to send. The message content is "Hello".

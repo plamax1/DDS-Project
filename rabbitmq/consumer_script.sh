@@ -1,7 +1,7 @@
 #! /bin/bash
 #build the consumer container
 
-docker build -t consumer:1.0 .
+docker build -t consumer:1.0 ./Consumer
 
 i=0;
 t=0;
