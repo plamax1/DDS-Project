@@ -35,16 +35,16 @@ public class Producer {
             channel.exchangeDeclare(EXCHANGE_NAME, "topic");
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 
-
             long lasttime = System.nanoTime();
             long startTime = lasttime;
             long timestamp = 0;
 
             String poisson = System.getenv("poisson");
             long rate = getMessageRate(poisson);
-            byte [] messageContent = toByteArray(); //rabbitmq needs a byte[] message content
+            // rabbitmq needs a byte[] message content
+            byte[] messageContent = toByteArray();
 
-            //don't use poisson
+            // don't use poisson
             if (poisson.equals("N") || poisson == null) {
                 for (int i = 0; i < messagesToSend; i++) {
 
@@ -56,16 +56,17 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("[" + (timestamp - lasttime)/(10*10*10*10*10*10) + "ms ] Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
+                    System.out.println("[" + (timestamp - lasttime) / (10 * 10 * 10 * 10 * 10 * 10) + "ms ] Sent '"
+                            + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     lasttime = timestamp;
                     sendWait(timestamp, rate);
                 }
             }
-            //use poisson
-            else{
+            // use poisson
+            else {
                 ArrayList<Double> sleeps = poisson(Integer.parseInt(poisson), messagesToSend);
-                for(int i=0; i < messagesToSend; i++){
-                    
+                for (int i = 0; i < messagesToSend; i++) {
+
                     timestamp = System.nanoTime();
                     // create a new message property containing the timestamp
                     Map<String, Object> messageProperties = messageTimestamp(timestamp);
@@ -74,10 +75,11 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
+                    System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:["
+                            + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     System.out.println(messageProperties.get("user-id"));
                     lasttime = timestamp;
-                    sendWait(timestamp, Math.round(sleeps.get(i))*1000);
+                    sendWait(timestamp, Math.round(sleeps.get(i)) * 1000);
 
                 }
             }
@@ -85,11 +87,12 @@ public class Producer {
             // Communicate that the transmission is over sending the endMessage.
             Map<String, Object> messageProperties = messageTimestamp(timestamp);
             channel.basicPublish(EXCHANGE_NAME, bindingKey,
-                            new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
-                            endMessage.getBytes("UTF-8"));
+                    new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
+                    endMessage.getBytes("UTF-8"));
 
             System.out.println("Transmission ended. It requires " + (System.nanoTime() - startTime)
-                    + "ns (" + ((System.nanoTime() - startTime)/(10*10*10*10*10*10*10*10*10)) + "s) to send " + messagesToSend + " messages.");
+                    + "ns (" + ((System.nanoTime() - startTime) / (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10))
+                    + "s) to send " + messagesToSend + " messages.");
         }
     }
 
@@ -119,24 +122,25 @@ public class Producer {
         return Integer.parseInt(System.getenv("messagesToSend"));
     }
 
-
     private static long getMessageRate(String poisson) {
-        if(poisson.equals("N")){ //use rate only if not using poisson
+        if (poisson.equals("N")) { // use rate only if not using poisson
 
-        String messageRate = System.getenv("rate"); //if rate is not valid
-        if (messageRate == null || messageRate.equals((String) "")) {
-            System.out.println("Environment variable 'messagesRate' not found. Sending messages without delays.");
-            return 0;
-        }
-        int msgSec = Integer.parseInt(messageRate);
-        System.out.println("Input msg/s is " + msgSec);
-        float msgNanoSec = (float)((float)msgSec)/((float)(10*10*10*10*10*10*10*10*10)); //number of messages to send for each nano sec
-        System.out.println("number of messages to send for each nanoSecond: " + msgNanoSec);
-        long delay = (long)((float)1/msgNanoSec); //delay in nanoSec between 2 messages
-        System.out.println("Delay between two messages set to " + delay + "ns (" + (msgNanoSec *10 *10 *10 * 10 *10 *10 ) + " ms)");
-        return delay; 
-    }
-    else return -1;
+            String messageRate = System.getenv("rate"); // if rate is not valid
+            if (messageRate == null || messageRate.equals((String) "")) {
+                System.out.println("Environment variable 'messagesRate' not found. Sending messages without delays.");
+                return 0;
+            }
+            int msgSec = Integer.parseInt(messageRate);
+            System.out.println("Input msg/s is " + msgSec);
+            // number of messages to send for each nano sec
+            float msgNanoSec = (float) ((float) msgSec) / ((float) (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10));
+            System.out.println("number of messages to send for each nanoSecond: " + msgNanoSec);
+            long delay = (long) ((float) 1 / msgNanoSec); // delay in nanoSec between 2 messages
+            System.out.println("Delay between two messages set to " + delay + "ns ("
+                    + (msgNanoSec * 10 * 10 * 10 * 10 * 10 * 10) + " ms)");
+            return delay;
+        } else
+            return -1;
     }
 
     public static ArrayList<Double> poisson(int lambda, int n) {
@@ -157,14 +161,14 @@ public class Producer {
         return sleeps;
     }
 
-    public static void sendWait(long startTime, long waitTime){
+    public static void sendWait(long startTime, long waitTime) {
         long target = startTime + waitTime;
-        while(System.nanoTime() < target){
+        while (System.nanoTime() < target) {
 
         }
     }
 
-    public static byte[] toByteArray() throws UnsupportedEncodingException{
+    public static byte[] toByteArray() throws UnsupportedEncodingException {
         return DEF_MESSAGE_STRING.getBytes("UTF-8");
     }
 }
