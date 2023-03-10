@@ -12,7 +12,8 @@ import com.rabbitmq.client.DeliverCallback;
 public class Consumer {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
-    private final static String endMessage = "end"; // must be the same declared on sender side.
+    // must be the same declared on sender side.
+    private final static String endMessage = "end"; 
     private static Channel channel;
     private static ArrayList<Stat> producerStats;
 
@@ -25,14 +26,13 @@ public class Consumer {
     }
 
     public static Stat getStat(String UUID) {
-        for(int i=0; i< producerStats.size(); i++){
-            if(UUID==producerStats.get(i).getUUID()) 
+        for (int i = 0; i < producerStats.size(); i++) {
+            if (UUID == producerStats.get(i).getUUID())
                 return producerStats.get(i);
         }
         return null;
     }
 
- 
     public static void main(String[] argv) throws Exception {
         establishChannel();
 
@@ -45,7 +45,7 @@ public class Consumer {
         getChannel().queueBind(queueName, EXCHANGE_NAME, bindingKey);
 
         // instantiate the object for the statistics on trasmission
-        producerStats = new ArrayList<Stat>(); 
+        producerStats = new ArrayList<Stat>();
 
         System.out.println("Waiting for messages. Topic is " + bindingKey + ". To exit press CTRL+C.");
 
@@ -54,35 +54,35 @@ public class Consumer {
 
             String messageUUID = delivery.getProperties().getHeaders().get("user-id").toString();
             boolean UUIDExist = false;
-            for(int i=0; i<producerStats.size(); i++){ //new producer
-                if(producerStats.get(i).getUUID().equals(messageUUID)){
+            for (int i = 0; i < producerStats.size(); i++) { // new producer
+                if (producerStats.get(i).getUUID().equals(messageUUID)) {
                     UUIDExist = true;
                 }
             }
 
-            if(UUIDExist == false){ //create a new producer Stats
+            if (UUIDExist == false) { // create a new producer Stats
                 System.out.println("[New producer: " + messageUUID + "]");
                 producerStats.add(new Stat(messageUUID));
             }
 
-            for(int i=0; i < producerStats.size(); i++){
-                if(producerStats.get(i).getUUID().equals(messageUUID)){
+            for (int i = 0; i < producerStats.size(); i++) {
+                if (producerStats.get(i).getUUID().equals(messageUUID)) {
                     if (!message.equals(endMessage)) {
-                        producerStats.get(i).printAndUpdateStat(delivery, message);
-                    }
-                    else {
+                        producerStats.get(i).updateStat(delivery, message);
+                    } else {
                         // endMessage received
                         producerStats.get(i).computeFinalStat();
                     }
-                    if (producerStats.get(i).getMsgNumber() == 1) { //it is the first message we are receiving from this producer UUID
+                    // it is the first message we are receiving from this producer UUID
+                    if (producerStats.get(i).getMsgNumber() == 1) { 
                         producerStats.get(i).setStartTransmissionTime(System.nanoTime());
                     }
-                } 
+                }
             }
-            
+
         };
 
-        //always consume once delivered
+        // always consume once delivered
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
 
         });
