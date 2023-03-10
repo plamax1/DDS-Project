@@ -18,10 +18,14 @@ public class Producer {
     private final static String DEF_TOPIC = "sport.swimming";
     private final static String DEF_MESSAGE_STRING = "Hello";
     private final static String endMessage = "end";
+    private static String producerId;
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
+
+        producerId = java.util.UUID.randomUUID().toString();
+        System.out.println("Producer ID: " + producerId);
 
         String bindingKey = getTopic();
         int messagesToSend = getMessageToSend();
@@ -30,6 +34,7 @@ public class Producer {
 
             channel.exchangeDeclare(EXCHANGE_NAME, "topic");
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+
 
             long lasttime = System.nanoTime();
             long startTime = lasttime;
@@ -70,6 +75,7 @@ public class Producer {
                             messageContent);
 
                     System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:[" + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
+                    System.out.println(messageProperties.get("user-id"));
                     lasttime = timestamp;
                     sendWait(timestamp, Math.round(sleeps.get(i))*1000);
 
@@ -77,7 +83,10 @@ public class Producer {
             }
 
             // Communicate that the transmission is over sending the endMessage.
-            channel.basicPublish(EXCHANGE_NAME, bindingKey, null, endMessage.getBytes("UTF-8"));
+            Map<String, Object> messageProperties = messageTimestamp(timestamp);
+            channel.basicPublish(EXCHANGE_NAME, bindingKey,
+                            new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
+                            endMessage.getBytes("UTF-8"));
 
             System.out.println("Transmission ended. It requires " + (System.nanoTime() - startTime)
                     + "ns (" + ((System.nanoTime() - startTime)/(10*10*10*10*10*10*10*10*10)) + "s) to send " + messagesToSend + " messages.");
@@ -87,6 +96,7 @@ public class Producer {
     private static Map<String, Object> messageTimestamp(long timestamp) {
         Map<String, Object> messageProperties = new HashMap<>();
         messageProperties.put("timestamp", timestamp);
+        messageProperties.put("user-id", producerId);
         return messageProperties;
     }
 

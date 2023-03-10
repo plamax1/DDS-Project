@@ -1,37 +1,38 @@
 package com.example;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
-import com.rabbitmq.client.Delivery;
 
 public class Consumer {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
     private final static String endMessage = "end"; // must be the same declared on sender side.
     private static Channel channel;
-    private static Stat stat;
+    private static ArrayList<Stat> producerStats;
 
     public static Channel getChannel() {
         return channel;
-    }
-
-    public static Stat getStat() {
-        return stat;
-    }
-
-    public static void setStat(Stat stat) {
-        Consumer.stat = stat;
     }
 
     public static void setChannel(Channel channel) {
         Consumer.channel = channel;
     }
 
+    public static Stat getStat(String UUID) {
+        for(int i=0; i< producerStats.size(); i++){
+            if(UUID==producerStats.get(i).getUUID()) 
+                return producerStats.get(i);
+        }
+        return null;
+    }
+
+ 
     public static void main(String[] argv) throws Exception {
         establishChannel();
 
@@ -44,24 +45,44 @@ public class Consumer {
         getChannel().queueBind(queueName, EXCHANGE_NAME, bindingKey);
 
         // instantiate the object for the statistics on trasmission
-        setStat(new Stat());
+        producerStats = new ArrayList<Stat>(); 
 
         System.out.println("Waiting for messages. Topic is " + bindingKey + ". To exit press CTRL+C.");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
 
-            if (!message.equals(endMessage)) {
-                printAndUpdateStat(delivery, message);
-            } else {
-                // endMessage received
-                computeFinalStat();
+            String messageUUID = delivery.getProperties().getHeaders().get("user-id").toString();
+            boolean UUIDExist = false;
+            for(int i=0; i<producerStats.size(); i++){ //new producer
+                if(producerStats.get(i).getUUID().equals(messageUUID)){
+                    UUIDExist = true;
+                }
             }
-            if (getStat().getMsgNumber() == 1) {
-                getStat().setStartTransmissionTime(System.nanoTime());
+
+            if(UUIDExist == false){ //create a new producer Stats
+                System.out.println("[New producer: " + messageUUID + "]");
+                producerStats.add(new Stat(messageUUID));
             }
+
+            for(int i=0; i < producerStats.size(); i++){
+                if(producerStats.get(i).getUUID().equals(messageUUID)){
+                    if (!message.equals(endMessage)) {
+                        producerStats.get(i).printAndUpdateStat(delivery, message);
+                    }
+                    else {
+                        // endMessage received
+                        producerStats.get(i).computeFinalStat();
+                    }
+                    if (producerStats.get(i).getMsgNumber() == 1) { //it is the first message we are receiving from this producer UUID
+                        producerStats.get(i).setStartTransmissionTime(System.nanoTime());
+                    }
+                } 
+            }
+            
         };
 
+        //always consume once delivered
         channel.basicConsume(queueName, true, deliverCallback, consumerTag -> {
 
         });
@@ -73,36 +94,5 @@ public class Consumer {
         Connection connection = factory.newConnection();
         Channel channel = connection.createChannel();
         setChannel(channel);
-    }
-
-    public static void printAndUpdateStat(Delivery delivery, String message) {
-        Stat stat = getStat();
-        try{
-        long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
-        long delay = System.nanoTime() - rcvInstant;
-        System.out.println(getStat().getMsgNumber() + "] Delay:[" + delay + " ns (" + delay/(10*10*10*10*10*10) + "ms)] Received '" +
-                delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
-        stat.incMsgNumber();
-        stat.incDelaySum((int) delay);
-        }
-        catch(NullPointerException e){
-            System.out.println("Message does not contain the param timestamp!!");
-        }
-    }
-
-    public static void computeFinalStat() {
-        Stat stat = getStat();
-
-        // Print average
-        float avgDelay = stat.computeAverageDelay();
-        System.out.println(endMessage + " RECEIVED! The average delay is " + (double)((double)avgDelay)/((double)(10*10*10*10*10*10)) + "ms.");
-
-        // Print msg/s
-        long difference = stat.computeTimeDifference();
-        float msgRate = stat.computeMessageRate(difference);
-        System.out.println("You received " + stat.getMsgNumber() + " messages in " + difference /(10*10*10*10*10*10) +"ms ( + " + difference /(10*10*10*10*10*10*10*10*10) + "s). So you received " + String.format("%.02f", msgRate) + " messages/s.");
-
-        // keep listening, so restart Stat
-        setStat(new Stat());
     }
 }
