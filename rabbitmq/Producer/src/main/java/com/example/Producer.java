@@ -115,12 +115,14 @@ public class Producer {
 
         String messageRate = System.getenv("rate"); //if rate is not valid
         if (messageRate == null || messageRate.equals((String) "")) {
-            System.out.println("Environment variable 'messagesToSend' not found. Sending messages without delays.");
+            System.out.println("Environment variable 'messagesRate' not found. Sending messages without delays.");
             return 0;
         }
-        int msgMin = Integer.parseInt(System.getenv("messagesToSend"));
-        int msgMillis = msgMin/(60*60*60*60);
-        long delay = (long)((long)1/(long)msgMillis); //delay in milliseconds between 2 messages
+        int msgMin = Integer.parseInt(messageRate);
+        System.out.println("Input msg/min is " + msgMin);
+        float msgMillis = (float)((float)msgMin)/((float)(60*10*10*10)); //number of messages to send for each millisecond
+        System.out.println("number of messages to send for each millisecond: " + msgMillis);
+        long delay = (long)((float)1/msgMillis); //delay in milliseconds between 2 messages
         System.out.println("Delay between two messages set to " + delay + "ms.");
         return delay; 
     }
