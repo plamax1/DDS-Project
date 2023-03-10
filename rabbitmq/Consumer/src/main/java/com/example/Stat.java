@@ -23,7 +23,6 @@ public class Stat {
         try {
             long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
             long delay = System.nanoTime() - rcvInstant;
-
             /*
              * Delete comment for verbose Mode
              * System.out.println("From: " + getUUID() + "| " + getMsgNumber() + "] Delay:["
@@ -40,14 +39,14 @@ public class Stat {
     public void computeFinalStat() {
         // Print average
         float avgDelay = computeAverageDelay();
-        System.out.println(endMessage + " RECEIVED! The average delay is "
+        System.out.println("[" + endMessage + "] RECEIVED! The average delay is "
                 + (double) ((double) avgDelay) / ((double) (10 * 10 * 10 * 10 * 10 * 10)) + "ms.");
 
         // Print msg/s
         long difference = computeTimeDifference();
         float msgRate = computeMessageRate(difference);
         System.out
-                .println("You received " + getMsgNumber() + " messages in " + difference / (10 * 10 * 10 * 10 * 10 * 10)
+                .println("[" + getUUID() + "]You received " + getMsgNumber() + " messages in " + difference / (10 * 10 * 10 * 10 * 10 * 10)
                         + "ms ( + " + difference / (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) + "s). So you received "
                         + String.format("%.02f", msgRate) + " messages/s.");
 
