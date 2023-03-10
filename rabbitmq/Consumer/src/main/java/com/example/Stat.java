@@ -47,10 +47,10 @@ public class Stat {
     }
 
     public long computeTimeDifference(){
-        return System.currentTimeMillis() - getStartTransmissionTime();
+        return System.nanoTime() - getStartTransmissionTime();
     }
 
-    public float computeMessageRate(long difference){
-        return ((float)this.getMsgNumber())*1000/((float)difference);
+    public float computeMessageRate(long difference){// msg/s
+        return ((float)this.getMsgNumber())*1000000000/((float)difference);
     }
 }

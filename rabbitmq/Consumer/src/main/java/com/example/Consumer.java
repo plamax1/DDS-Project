@@ -58,7 +58,7 @@ public class Consumer {
                 computeFinalStat();
             }
             if (getStat().getMsgNumber() == 1) {
-                getStat().setStartTransmissionTime(System.currentTimeMillis());
+                getStat().setStartTransmissionTime(System.nanoTime());
             }
         };
 
@@ -79,8 +79,8 @@ public class Consumer {
         Stat stat = getStat();
         try{
         long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
-        long delay = System.currentTimeMillis() - rcvInstant;
-        System.out.println(getStat().getMsgNumber() + "] Delay:[" + delay + " ms] Received '" +
+        long delay = System.nanoTime() - rcvInstant;
+        System.out.println(getStat().getMsgNumber() + "] Delay:[" + delay + " ns (" + delay/(10*10*10*10*10*10) + "ms)] Received '" +
                 delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
         stat.incMsgNumber();
         stat.incDelaySum((int) delay);
@@ -95,13 +95,12 @@ public class Consumer {
 
         // Print average
         float avgDelay = stat.computeAverageDelay();
-        System.out.println(endMessage + " RECEIVED! The average delay is " + avgDelay + "ms.");
+        System.out.println(endMessage + " RECEIVED! The average delay is " + (double)((double)avgDelay)/((double)(10*10*10*10*10*10)) + "ms.");
 
         // Print msg/s
         long difference = stat.computeTimeDifference();
         float msgRate = stat.computeMessageRate(difference);
-        System.out.println("You received " + stat.getMsgNumber() + " messages in " + difference
-                + "ms. So you received " + String.format("%.02f", msgRate) + " messages/s.");
+        System.out.println("You received " + stat.getMsgNumber() + " messages in " + difference /(10*10*10*10*10*10) +"ms ( + " + difference /(10*10*10*10*10*10*10*10*10) + "s). So you received " + String.format("%.02f", msgRate) + " messages/s.");
 
         // keep listening, so restart Stat
         setStat(new Stat());

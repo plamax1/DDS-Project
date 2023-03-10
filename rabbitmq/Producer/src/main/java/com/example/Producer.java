@@ -31,7 +31,7 @@ public class Producer {
             channel.exchangeDeclare(EXCHANGE_NAME, "topic");
             channel.queueDeclare(QUEUE_NAME, false, false, false, null);
 
-            long lasttime = System.currentTimeMillis();
+            long lasttime = System.nanoTime();
             long startTime = lasttime;
             long timestamp = 0;
 
@@ -43,7 +43,7 @@ public class Producer {
             if (poisson.equals("N") || poisson == null) {
                 for (int i = 0; i < messagesToSend; i++) {
 
-                    timestamp = System.currentTimeMillis();
+                    timestamp = System.nanoTime();
                     // create a new message property containing the timestamp
                     Map<String, Object> messageProperties = messageTimestamp(timestamp);
 
@@ -51,7 +51,7 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("[" + (timestamp - lasttime) + "] Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
+                    System.out.println("[" + (timestamp - lasttime)/(10*10*10*10*10*10) + "ms ] Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
                     lasttime = timestamp;
                     sendWait(timestamp, rate);
                 }
@@ -61,7 +61,7 @@ public class Producer {
                 ArrayList<Double> sleeps = poisson(Integer.parseInt(poisson), messagesToSend);
                 for(int i=0; i < messagesToSend; i++){
                     
-                    timestamp = System.currentTimeMillis();
+                    timestamp = System.nanoTime();
                     // create a new message property containing the timestamp
                     Map<String, Object> messageProperties = messageTimestamp(timestamp);
 
@@ -79,8 +79,8 @@ public class Producer {
             // Communicate that the transmission is over sending the endMessage.
             channel.basicPublish(EXCHANGE_NAME, bindingKey, null, endMessage.getBytes("UTF-8"));
 
-            System.out.println("Transmission ended. It requires " + (System.currentTimeMillis() - startTime)
-                    + "ms to send " + messagesToSend + " messages.");
+            System.out.println("Transmission ended. It requires " + (System.nanoTime() - startTime)
+                    + "ns (" + ((System.nanoTime() - startTime)/(10*10*10*10*10*10*10*10*10)) + "s) to send " + messagesToSend + " messages.");
         }
     }
 
@@ -118,19 +118,19 @@ public class Producer {
             System.out.println("Environment variable 'messagesRate' not found. Sending messages without delays.");
             return 0;
         }
-        int msgMin = Integer.parseInt(messageRate);
-        System.out.println("Input msg/min is " + msgMin);
-        float msgMillis = (float)((float)msgMin)/((float)(60*10*10*10)); //number of messages to send for each millisecond
-        System.out.println("number of messages to send for each millisecond: " + msgMillis);
-        long delay = (long)((float)1/msgMillis); //delay in milliseconds between 2 messages
-        System.out.println("Delay between two messages set to " + delay + "ms.");
+        int msgSec = Integer.parseInt(messageRate);
+        System.out.println("Input msg/s is " + msgSec);
+        float msgNanoSec = (float)((float)msgSec)/((float)(10*10*10*10*10*10*10*10*10)); //number of messages to send for each nano sec
+        System.out.println("number of messages to send for each nanoSecond: " + msgNanoSec);
+        long delay = (long)((float)1/msgNanoSec); //delay in nanoSec between 2 messages
+        System.out.println("Delay between two messages set to " + delay + "ns (" + (msgNanoSec *10 *10 *10 * 10 *10 *10 ) + " ms)");
         return delay; 
     }
     else return -1;
     }
 
-    public static ArrayList<Double> poisson(int lampda, int n) {
-        double time_span = n / lampda;
+    public static ArrayList<Double> poisson(int lambda, int n) {
+        double time_span = n / lambda;
         ArrayList<Double> events = new ArrayList<Double>();
         ArrayList<Double> sleeps = new ArrayList<Double>();
         for (int j = 0; j < n; j++) {
@@ -149,7 +149,7 @@ public class Producer {
 
     public static void sendWait(long startTime, long waitTime){
         long target = startTime + waitTime;
-        while(System.currentTimeMillis() < target){
+        while(System.nanoTime() < target){
 
         }
     }

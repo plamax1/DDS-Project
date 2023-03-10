@@ -14,7 +14,7 @@ do
     export messagesToSend=$messagesToSend
     read -p "Wanna use the poisson rate? (N or [int value]) : " poisson
     export poisson=$poisson
-    read -p "OTHERWISE insert the message rate (msg/min) :" rate
+    read -p "OTHERWISE insert the message rate (msg/s) :" rate
     export rate=$rate
 
     
