@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="656b166e-d18b-45fe-af66-d26f27b79f01" name="Changes" comment="ActiveMQ">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DDS-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/DDS-Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kafka/app/producer/producer.py" beforeDir="false" afterPath="$PROJECT_DIR$/kafka/app/producer/producer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kafka/app/producer_script.sh" beforeDir="false" afterPath="$PROJECT_DIR$/kafka/app/producer_script.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +50,15 @@
       <workItem from="1670253069722" duration="296000" />
       <workItem from="1670255561977" duration="10000" />
       <workItem from="1677665789520" duration="116000" />
+      <workItem from="1677665916203" duration="127000" />
+      <workItem from="1677667115074" duration="40000" />
+      <workItem from="1677835933935" duration="20000" />
+      <workItem from="1677946923904" duration="34000" />
+      <workItem from="1677960227759" duration="24000" />
+      <workItem from="1677960927030" duration="68000" />
+      <workItem from="1678007858194" duration="17000" />
+      <workItem from="1678008839723" duration="54000" />
+      <workItem from="1678720763114" duration="13000" />
     </task>
     <task id="LOCAL-00001" summary="ActiveMQ">
       <created>1670250457721</created>
@@ -58,7 +67,14 @@
       <option name="project" value="LOCAL" />
       <updated>1670250457721</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="ActiveMQ">
+      <created>1677666014547</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1677666014547</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
