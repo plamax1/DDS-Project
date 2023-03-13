@@ -4,7 +4,7 @@ Comparison and a performance evaluation of three solutions implementing the publ
 ## ActiveMQ Service
 ### Start ActiveMQ Background
 ```bash
-cd active\ MQ/docker\ active\ MQ
+cd active\ MQ/Run/docker\ active\ MQ
 docker-compose up 
 ```
 ### Consumer
