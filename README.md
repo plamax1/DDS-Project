@@ -11,13 +11,13 @@ docker-compose up
 It is recommended to instatiate first the consumers, then the producers.
 
 ```bash
-cd active\ MQ/producer\ and\ consumer
+cd active\ MQ/Run/producer\ and\ consumer
 bash script_consumer.sh
 ```
 Then follow the instructions on the command line.
 ### Producer
 ```bash
-cd active\ MQ/producer\ and\ consumer
+cd active\ MQ/Run/producer\ and\ consumer
 bash script_producer.sh
 ```
 Then follow the instructions on the command line.
