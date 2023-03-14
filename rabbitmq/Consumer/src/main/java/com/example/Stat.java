@@ -4,7 +4,7 @@ import com.rabbitmq.client.Delivery;
 
 public class Stat {
     private int msgNumber;
-    private int delaySum;
+    private long delaySum;
     private long startTransmissionTime;
     private String UUID;
     private final static String endMessage = "end"; // must be the same declared on sender side.
@@ -15,22 +15,16 @@ public class Stat {
         this.UUID = UUID;
     }
 
-    public String getUUID() {
-        return this.UUID;
-    }
-
     public void updateStat(Delivery delivery, String message) {
         try {
             long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
             long delay = System.nanoTime() - rcvInstant;
-            
-            /*Delete comment for verbose Mode
-            System.out.println("From: " + getUUID() + "| " + getMsgNumber() + "] Delay:["
-            + delay + " ns (" + delay/(10*10*10*10*10*10) + "ms)] Received '" +
-            delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
-            */
+
+            // VERBOSE
+            verbose(delivery, message, delay);
+
             incMsgNumber();
-            incDelaySum((int) delay);
+            incDelaySum(delay);
         } catch (NullPointerException e) {
             System.out.println("Message does not contain the param timestamp or user-id !!");
         }
@@ -38,22 +32,29 @@ public class Stat {
 
     public void computeFinalStat() {
         // Print average
-        float avgDelay = computeAverageDelay();
-        System.out.println("[" + endMessage + "] RECEIVED! The average delay is "
-                + (double) ((double) avgDelay) / ((double) (10 * 10 * 10 * 10 * 10 * 10)) + "ms.");
+        double avgDelay = computeAverageDelay();
+        System.out.println("[" + getUUID() + "] '" + endMessage + "' RECEIVED! The average delay is "
+                + (double) ((avgDelay) / (double) (10 * 10 * 10 * 10 * 10 * 10)) + "ms.");
+
+        // compute total elapsed time
+        long difference = computeTimeDifference();
 
         // Print msg/s
-        long difference = computeTimeDifference();
         float msgRate = computeMessageRate(difference);
         System.out
-                .println("[" + getUUID() + "]You received " + getMsgNumber() + " messages in " + difference / (10 * 10 * 10 * 10 * 10 * 10)
+                .println("[" + getUUID() + "] Received " + getMsgNumber() + " messages in "
+                        + difference / (10 * 10 * 10 * 10 * 10 * 10)
                         + "ms ( + " + difference / (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) + "s). So you received "
                         + String.format("%.02f", msgRate) + " messages/s.");
 
         // keep listening from this producer, so restart Stat
-        this.delaySum = 0;
-        this.msgNumber = 0;
-        this.startTransmissionTime = 0;
+        setDelaySum(0);
+        setMsgNumber(0);
+        setStartTransmissionTime(0);
+    }
+
+    public String getUUID() {
+        return this.UUID;
     }
 
     public long getStartTransmissionTime() {
@@ -64,15 +65,15 @@ public class Stat {
         this.startTransmissionTime = startTransmissionTime;
     }
 
-    public int getDelaySum() {
+    public long getDelaySum() {
         return delaySum;
     }
 
-    public void setDelaySum(int delaySum) {
+    public void setDelaySum(long delaySum) {
         this.delaySum = delaySum;
     }
 
-    public void incDelaySum(int delay) {
+    public void incDelaySum(long delay) {
         this.delaySum += delay;
     }
 
@@ -88,8 +89,8 @@ public class Stat {
         this.msgNumber = msgNumber + 1;
     }
 
-    public float computeAverageDelay() {
-        return (float) (((float) getDelaySum()) / ((float) getMsgNumber()));
+    public double computeAverageDelay() {
+        return (double) (((double) getDelaySum()) / ((double) getMsgNumber()));
     }
 
     public long computeTimeDifference() {
@@ -98,5 +99,11 @@ public class Stat {
 
     public float computeMessageRate(long difference) {// msg/s
         return ((float) this.getMsgNumber()) * 1000000000 / ((float) difference);
+    }
+
+    public void verbose(Delivery delivery, String message, long delay) {
+        System.out.println("[" + getUUID() + "] - " + getMsgNumber() + " - Delay: ("
+                + ((float) delay / (float) (10 * 10 * 10 * 10 * 10 * 10)) + "ms) Received '" +
+                delivery.getEnvelope().getRoutingKey() + "': '" + message + "'");
     }
 }

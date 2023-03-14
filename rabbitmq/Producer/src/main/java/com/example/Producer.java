@@ -1,6 +1,5 @@
 package com.example;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,20 +14,23 @@ public class Producer {
 
     private final static String QUEUE_NAME = "topic_queue";
     private final static String EXCHANGE_NAME = "topic_exchange";
-    private final static String DEF_TOPIC = "sport.swimming";
-    private final static String DEF_MESSAGE_STRING = "Hello";
+    private final static String DEFAULT_TOPIC = "sport";
+    private final static String DEFAULT_MESSAGE_BODY = "Hello";
     private final static String endMessage = "end";
     private static String producerId;
 
     public static void main(String[] argv) throws Exception {
+        // Generate a random identifier for this producer.
+        producerId = java.util.UUID.randomUUID().toString();
+        System.out.println("Producer ID: [" + producerId + "]");
+
+        // Create a connection with the Broker
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
 
-        producerId = java.util.UUID.randomUUID().toString();
-        System.out.println("Producer ID: " + producerId);
-
-        String bindingKey = getTopic();
+        String topic = getTopic();
         int messagesToSend = getMessageToSend();
+
         try (Connection connection = factory.newConnection();
                 Channel channel = connection.createChannel()) {
 
@@ -39,67 +41,65 @@ public class Producer {
             long startTime = lasttime;
             long timestamp = 0;
 
-            
             String poisson = System.getenv("poisson");
             long rate = getMessageRate(poisson);
-            // rabbitmq needs a byte[] message content
-            byte[] messageContent = toByteArray();
+
+            // rabbitmq sends message body as byte[]
+            byte[] messageContent = DEFAULT_MESSAGE_BODY.getBytes("UTF-8");
 
             ArrayList<Double> sleeps = new ArrayList<Double>();
-            sleeps = poissonDavide(Integer.parseInt(poisson), messagesToSend);
-            /* 
-            ArrayList<Long> longSleeps = new ArrayList<Long>();
-            for(int i=0; i< sleeps.size(); i++){
-                sleeps(i)=
-            }*/
-
+            sleeps = poissonGenerator(Integer.parseInt(poisson), messagesToSend);
 
             // don't use poisson
             if (poisson.equals("N") || poisson == null) {
+                System.out.println(producerId + "] Sending " + messagesToSend + " messages containing the body '"
+                        + DEFAULT_MESSAGE_BODY + "' on topic '" + topic + "' with a constant rate of " + rate
+                        + " msg/s");
                 for (int i = 0; i < messagesToSend; i++) {
 
                     timestamp = System.nanoTime();
                     // create a new message property containing the timestamp
                     Map<String, Object> messageProperties = messageTimestamp(timestamp);
 
-                    channel.basicPublish(EXCHANGE_NAME, bindingKey,
+                    channel.basicPublish(EXCHANGE_NAME, topic,
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("[" + (timestamp - lasttime) / (10 * 10 * 10 * 10 * 10 * 10) + "ms ] Sent '"
-                            + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
+                    // VERBOSE
+                    verbose(i, timestamp, lasttime);
+
                     lasttime = timestamp;
-                    sendWait(timestamp, rate);
+                    wait(timestamp, rate);
                 }
             }
             // use poisson
             else {
 
-                for (int i = 0; i < messagesToSend-1; i++) {
-
+                for (int i = 0; i < messagesToSend - 1; i++) {
                     timestamp = System.nanoTime();
                     // create a new message property containing the timestamp
                     Map<String, Object> messageProperties = messageTimestamp(timestamp);
 
-                    channel.basicPublish(EXCHANGE_NAME, bindingKey,
+                    channel.basicPublish(EXCHANGE_NAME, topic,
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    //System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:["
-                    //        + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
-                    //System.out.println(messageProperties.get("user-id"));
+                    //VERBOSE
+                    verbose(i, timestamp, lasttime, sleeps.get(i));
+                    
                     lasttime = timestamp;
-                    sendWait(timestamp, (long)(sleeps.get(i)* 1000000000));
+                    wait(timestamp, (long) (sleeps.get(i) * 1000000000));
 
                 }
             }
 
             // Communicate that the transmission is over sending the endMessage.
             Map<String, Object> messageProperties = messageTimestamp(timestamp);
-            channel.basicPublish(EXCHANGE_NAME, bindingKey,
+            channel.basicPublish(EXCHANGE_NAME, topic,
                     new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                     endMessage.getBytes("UTF-8"));
 
+            // print total elapsed time
             System.out.println("Transmission ended. It requires " + (System.nanoTime() - startTime)
                     + "ns (" + ((System.nanoTime() - startTime) / (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10))
                     + "s) to send " + messagesToSend + " messages.");
@@ -116,10 +116,10 @@ public class Producer {
     private static String getTopic() {
         String topic = System.getenv("topic");
         if (topic == null || topic.equals((String) "")) {
-            System.out.println("Environment variable 'topic' not found. Listening on the default [" + DEF_TOPIC + "].");
-            return DEF_TOPIC;
+            System.out.println("Environment variable 'topic' not found. Sending message with the default topic '"
+                    + DEFAULT_TOPIC + "'.");
+            return DEFAULT_TOPIC;
         }
-
         return topic;
     }
 
@@ -132,31 +132,34 @@ public class Producer {
         return Integer.parseInt(System.getenv("messagesToSend"));
     }
 
-    public static ArrayList<Double> poissonDavide(int lampda, int n) {
-        double time_span= n/lampda;
-        ArrayList<Double>events = new ArrayList<Double>();
-        ArrayList<Double> sleeps= new ArrayList<Double>();
-        for (int j=0; j<n; j++) {
+    public static ArrayList<Double> poissonGenerator(int lambda, int n) {
+        double time_span = n / lambda;
+        ArrayList<Double> events = new ArrayList<Double>();
+        ArrayList<Double> sleeps = new ArrayList<Double>();
+        for (int j = 0; j < n; j++) {
             events.add(Math.random());
         }
         Collections.sort(events);
-        for(int j=0; j<n; j++) {
-            events.set(j,events.get(j)*time_span);
+        for (int j = 0; j < n; j++) {
+            events.set(j, events.get(j) * time_span);
         }
-        for(int i=1; i<events.size(); i++) {
-            sleeps.add(events.get(i)-events.get(i-1));
+        for (int i = 1; i < events.size(); i++) {
+            sleeps.add(events.get(i) - events.get(i - 1));
         }
         return sleeps;
     }
 
     private static long getMessageRate(String poisson) {
-        if (poisson.equals("N")) { // use rate only if not using poisson
+        // use rate only if not using poisson
+        if (poisson.equals("N")) { 
 
-            String messageRate = System.getenv("rate"); // if rate is not valid
+            String messageRate = System.getenv("rate"); 
+            // Check if rate is not valid
             if (messageRate == null || messageRate.equals((String) "")) {
                 System.out.println("Environment variable 'messagesRate' not found. Sending messages without delays.");
                 return 0;
             }
+
             int msgSec = Integer.parseInt(messageRate);
             System.out.println("Input msg/s is " + msgSec);
             // number of messages to send for each nano sec
@@ -170,32 +173,21 @@ public class Producer {
             return -1;
     }
 
-    public static ArrayList<Double> poisson(int lambda, int n) {
-        double time_span = n / lambda;
-        ArrayList<Double> events = new ArrayList<Double>();
-        ArrayList<Double> sleeps = new ArrayList<Double>();
-        for (int j = 0; j < n; j++) {
-            events.add(Math.random());
-        }
-        Collections.sort(events);
-        for (int j = 0; j < n; j++) {
-            events.set(j, events.get(j) * time_span);
-        }
-        sleeps.add(0.0);
-        for (int i = 1; i < events.size(); i++) {
-            sleeps.add(events.get(i) - events.get(i - 1));
-        }
-        return sleeps;
-    }
-
-    public static void sendWait(long startTime, long waitTime) {
+    public static void wait(long startTime, long waitTime) {
         long target = startTime + waitTime;
         while (System.nanoTime() < target) {
-
         }
     }
 
-    public static byte[] toByteArray() throws UnsupportedEncodingException {
-        return DEF_MESSAGE_STRING.getBytes("UTF-8");
+    //Prints messages sent in constant mode
+    public static void verbose(int msgN, long timestamp, long lasttime) {
+        System.out.println(msgN + "] Elapsed time: " + (timestamp - lasttime) / (10 * 10 * 10 * 10 * 10 * 10) + "ms.");
     }
+
+    //Prints messages sent in poisson mode
+    public static void verbose(int msgN, long timestamp, long lasttime, double poissonValue) {
+        System.out.println(msgN + "] Poisson Value: " + poissonValue + "]. Elapsed time: "
+                + (timestamp - lasttime) / (10 * 10 * 10 * 10 * 10 * 10) + "ms.");
+    }
+
 }

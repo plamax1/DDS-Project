@@ -13,7 +13,7 @@ public class Consumer {
 
     private final static String EXCHANGE_NAME = "topic_exchange";
     // must be the same declared on sender side.
-    private final static String endMessage = "end"; 
+    private final static String endMessage = "end";
     private static Channel channel;
     private static ArrayList<Stat> producerStats;
 
@@ -61,7 +61,8 @@ public class Consumer {
             }
 
             if (UUIDExist == false) { // create a new producer Stats
-                System.out.println("[New producer: " + messageUUID + "]");
+                System.out.println("New producer: [ " + messageUUID + "] recceiving messages. End message is '"
+                        + endMessage + "'");
                 producerStats.add(new Stat(messageUUID));
             }
 
@@ -74,7 +75,7 @@ public class Consumer {
                         producerStats.get(i).computeFinalStat();
                     }
                     // it is the first message we are receiving from this producer UUID
-                    if (producerStats.get(i).getMsgNumber() == 1) { 
+                    if (producerStats.get(i).getMsgNumber() == 1) {
                         producerStats.get(i).setStartTransmissionTime(System.nanoTime());
                     }
                 }
