@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/bash
 #build the consumer container
 docker build ./Producer -t producer
 echo "Please digit the name of the topic"
