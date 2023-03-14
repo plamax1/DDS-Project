@@ -7,7 +7,24 @@ docker build ./producer -t producer
 
 for (( i = 0; i < $2; i++ ))
 do
+    docker run -d --network host  producer $5 $3 $4
+    echo "Producer number $i running and sending messages on topic $1"
+done
+
+for (( i = 0; i < $2; i++ ))
+do
     docker run -d --network host  producer $1 $3 $4
     echo "Producer number $i running and sending messages on topic $1"
 done
 
+for (( i = 0; i < $2; i++ ))
+do
+    docker run -d --network host  producer $6 $3 $4
+    echo "Producer number $i running and sending messages on topic $1"
+done
+
+for (( i = 0; i < $2; i++ ))
+do
+    docker run -d --network host  producer $7 $3 $4
+    echo "Producer number $i running and sending messages on topic $1"
+done

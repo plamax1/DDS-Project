@@ -2,7 +2,6 @@
 tmp/**
 bin/**
 target/**
-*.jar
 *.war
 *.class
 *.pydevproject

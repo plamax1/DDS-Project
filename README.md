@@ -4,20 +4,20 @@ Comparison and a performance evaluation of three solutions implementing the publ
 ## ActiveMQ Service
 ### Start ActiveMQ Background
 ```bash
-cd active\ MQ/docker\ active\ MQ
+cd active\ MQ/Run/docker\ active\ MQ
 docker-compose up 
 ```
 ### Consumer
 It is recommended to instatiate first the consumers, then the producers.
 
 ```bash
-cd active\ MQ/producer\ and\ consumer
+cd active\ MQ/Run/producer\ and\ consumer
 bash script_consumer.sh
 ```
 Then follow the instructions on the command line.
 ### Producer
 ```bash
-cd active\ MQ/producer\ and\ consumer
+cd active\ MQ/Run/producer\ and\ consumer
 bash script_producer.sh
 ```
 Then follow the instructions on the command line.
@@ -57,14 +57,14 @@ docker-compose up --build
 ```
 ### Start the Consumers
 ```bash
-cd rabbitmq/Consumer
+cd rabbitmq
 ./consumer_script.sh
 ```
 Insert the topic a Consumer should be listening on, and the number of consumer to run with this instruction.
 After creation, consumers remains active and listening.
 ### Start the Producers
 ```bash
-cd rabbitmq/Producer
+cd rabbitmq
 ./producer_script.sh
 ```
 Insert the topic and the number of messages to send. The message content is "Hello".
