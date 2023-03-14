@@ -23,12 +23,12 @@ public class Stat {
         try {
             long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
             long delay = System.nanoTime() - rcvInstant;
-            /*
-             * Delete comment for verbose Mode
-             * System.out.println("From: " + getUUID() + "| " + getMsgNumber() + "] Delay:["
-             * + delay + " ns (" + delay/(10*10*10*10*10*10) + "ms)] Received '" +
-             * delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
-             */
+            
+            /*Delete comment for verbose Mode
+            System.out.println("From: " + getUUID() + "| " + getMsgNumber() + "] Delay:["
+            + delay + " ns (" + delay/(10*10*10*10*10*10) + "ms)] Received '" +
+            delivery.getEnvelope().getRoutingKey() + "':'" + message + "'");
+            */
             incMsgNumber();
             incDelaySum((int) delay);
         } catch (NullPointerException e) {

@@ -39,10 +39,20 @@ public class Producer {
             long startTime = lasttime;
             long timestamp = 0;
 
+            
             String poisson = System.getenv("poisson");
             long rate = getMessageRate(poisson);
             // rabbitmq needs a byte[] message content
             byte[] messageContent = toByteArray();
+
+            ArrayList<Double> sleeps = new ArrayList<Double>();
+            sleeps = poissonDavide(Integer.parseInt(poisson), messagesToSend);
+            /* 
+            ArrayList<Long> longSleeps = new ArrayList<Long>();
+            for(int i=0; i< sleeps.size(); i++){
+                sleeps(i)=
+            }*/
+
 
             // don't use poisson
             if (poisson.equals("N") || poisson == null) {
@@ -64,8 +74,8 @@ public class Producer {
             }
             // use poisson
             else {
-                ArrayList<Double> sleeps = poisson(Integer.parseInt(poisson), messagesToSend);
-                for (int i = 0; i < messagesToSend; i++) {
+
+                for (int i = 0; i < messagesToSend-1; i++) {
 
                     timestamp = System.nanoTime();
                     // create a new message property containing the timestamp
@@ -75,11 +85,11 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:["
-                            + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
-                    System.out.println(messageProperties.get("user-id"));
+                    //System.out.println("sleep:[" + String.format("%.02f", sleeps.get(i)) + "]. Time diff:["
+                    //        + (timestamp - lasttime) + "]. Sent '" + bindingKey + "':'" + DEF_MESSAGE_STRING + "'");
+                    //System.out.println(messageProperties.get("user-id"));
                     lasttime = timestamp;
-                    sendWait(timestamp, Math.round(sleeps.get(i)) * 1000);
+                    sendWait(timestamp, (long)(sleeps.get(i)* 1000000000));
 
                 }
             }
@@ -120,6 +130,23 @@ public class Producer {
             return 1;
         }
         return Integer.parseInt(System.getenv("messagesToSend"));
+    }
+
+    public static ArrayList<Double> poissonDavide(int lampda, int n) {
+        double time_span= n/lampda;
+        ArrayList<Double>events = new ArrayList<Double>();
+        ArrayList<Double> sleeps= new ArrayList<Double>();
+        for (int j=0; j<n; j++) {
+            events.add(Math.random());
+        }
+        Collections.sort(events);
+        for(int j=0; j<n; j++) {
+            events.set(j,events.get(j)*time_span);
+        }
+        for(int i=1; i<events.size(); i++) {
+            sleeps.add(events.get(i)-events.get(i-1));
+        }
+        return sleeps;
     }
 
     private static long getMessageRate(String poisson) {
