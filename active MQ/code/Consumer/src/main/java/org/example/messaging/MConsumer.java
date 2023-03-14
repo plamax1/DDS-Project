@@ -9,24 +9,21 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Date;
 
-
 import javax.jms.*;
 import java.util.ArrayList;
 
-public class MConsumer implements AutoCloseable{
+public class MConsumer implements AutoCloseable {
     private String baseUrl;
 
     private ConnectionFactory connectionFactory;
 
     private Connection connection;
 
-
     private Session session;
 
     private Topic topic;
 
     private static ArrayList<Long> delayArray = new ArrayList<Long>();
-
 
     private long startTimestamp;
 
@@ -40,7 +37,6 @@ public class MConsumer implements AutoCloseable{
 
     private MessageConsumer consumer;
 
-
     private boolean inError;
 
     private String error;
@@ -49,29 +45,25 @@ public class MConsumer implements AutoCloseable{
 
     private boolean first = false;
 
-
-
-    private void firstTime (long firstTimestamp) {
+    private void firstTime(long firstTimestamp) {
         if (first == false) {
             first = true;
             startTimestamp = firstTimestamp;
         }
     }
 
-    private double througput (int counter, long timestamp) {
+    private double througput(int counter, long timestamp) {
         lastTimestamp = timestamp;
-        if (lastTimestamp==startTimestamp){
+        if (lastTimestamp == startTimestamp) {
             return 0;
         }
         double i = lastTimestamp - startTimestamp;
-        double ii = i/1000;
+        double ii = i / 1000;
         double j = counter;
-        //double jj= j*size;
-        throughput = j/ii;
+        // double jj= j*size;
+        throughput = j / ii;
         return throughput;
     }
-
-
 
     private MConsumer(String brokerUrl, String topicName) {
         baseUrl = brokerUrl;
@@ -92,9 +84,9 @@ public class MConsumer implements AutoCloseable{
             return;
         }
 
-        try{
+        try {
             topic = session.createTopic(topicName);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             inError = true;
             error = ex.getMessage();
             return;
@@ -105,30 +97,29 @@ public class MConsumer implements AutoCloseable{
                 try {
                     long localTimestamp = System.currentTimeMillis();
                     firstTime(localTimestamp);
-                    //int msgId = message.getIntProperty("message_id");
+                    // int msgId = message.getIntProperty("message_id");
                     String msgMessage = message.getStringProperty("message");
-                    //Message i = new org.example.models.Message(msgId, msgMessage);
+                    // Message i = new org.example.models.Message(msgId, msgMessage);
                     long msgTimestamp = message.getJMSTimestamp();
                     delay = delay + (localTimestamp - msgTimestamp);
-                    //if((msgId+1)%10000==0) {
-                        //System.out.println("id: " + msgId + " delivered");
-                        //System.out.println( "The size of the message is: " + getMessageSizeInBytes(i));
-                    //}
-                    counter ++;
+                    // if((msgId+1)%10000==0) {
+                    // System.out.println("id: " + msgId + " delivered");
+                    // System.out.println( "The size of the message is: " +
+                    // getMessageSizeInBytes(i));
+                    // }
+                    counter++;
                     if (msgMessage.equals("end")) {
-                        double averageDelay = delay/counter;
+                        double averageDelay = delay / counter;
                         double t = througput(counter, localTimestamp);
                         System.out.println("END MESSAGES");
                         System.out.println("The average delay is " + averageDelay);
                         System.out.println("The average throughput until now is: " + t + " messages per second");
                     }
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     System.out.println(ex);
                 }
             });
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             inError = true;
             error = ex.getMessage();
         }
@@ -136,11 +127,12 @@ public class MConsumer implements AutoCloseable{
 
     @Override
     public void close() {
-        try{
+        try {
             consumer.close();
             session.close();
             connection.close();
-        }catch(Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
     public static void initialize(String baseUrl, String topicName) {
