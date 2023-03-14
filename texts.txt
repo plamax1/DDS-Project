@@ -35,3 +35,143 @@ Result: avg thr: 2499.01 #7
          avg lat: 13.26 ms
 Result: avg thr: 2499.01 #8
          avg lat: 14.49 ms 
+
+
+Test 04/03
+Dato che dopo alcuni test, inviando messaggi con un for per vedere qual è il 
+throughput massimo abbiamo visto che per quanto riguarda active mq in throughput massimo
+era intorno agli 800 msg/s. Test effettuati con 1 producer , 1 consumer, abbiamo deciso di utilizzare questo
+valore per quanto riguarda i test con un valore costante di lambda.
+
+RabbitMQ
+#2 consumer, rate = 800 msg/sec, 1 producer
+Result: avg thr: 763.36 #1    
+         avg lat: 10.73 ms
+Result: avg thr: 763.36 #2
+         avg lat: 10.31 ms
+
+Test TYPE 1: increasing message_rate 1 producer 8 consumer, sending interval 60 sec
+#TEST 1 - KAFKA 
+msg_rate= 500
+Result: avg thr: 479  
+         avg lat: 10.85 ms
+
+#TEST 2 - KAFKA 
+msg_rate= 1000
+Result: avg thr: 931.73 #1    
+         avg lat: 11.21 ms
+
+#TEST 3 - KAFKA 
+msg_rate= 2000
+Result: avg thr: 1761.42 #1    
+         avg lat: 11.1 ms
+
+#TEST 4 - KAFKA 
+msg_rate= 4000
+Result: avg thr: 2665.65 #1    
+         avg lat:  10.8 ms
+
+##Notiamo che ci avviciamo al throughput di picco?(non è vero se dopo aumenta), nonostante ciò la latenza non argumenta
+come sarebbe naturale aspettarsi, (dal momento che i messaggi si accumulano quando vengono generati)
+di conseguenza deduciamo che il collo di bottiglia non è il delivery dei messaggi da parte del broker, 
+bensì la generazione dei messaggi (o il caricamento del publisher nel broker)
+
+#TEST 5 - KAFKA 
+msg_rate= 8000
+Result: avg thr: 5745 #1    
+         avg lat:  10.2 ms
+
+
+NOTIAMP CHE LA LATENZA DIMINUISCE, PERCHE'?
+#TEST 6 - KAFKA 
+msg_rate= Unlimited message rate
+
+Result: avg thr: 25798,18 #1    
+         avg lat:  23.77 ms
+
+#Notiamo che se non c'è il vettore degli sleep il throughput aumenta fino al picco di
+25k messaggi al secondo, la colpa è della memoria? tempo di accesso in memoria che è
+rilevante rispetto alla sleep ? e se usassimo 
+#TEST 6 - 16msg/sec 
+msg_rate= Unlimited message rate
+
+Result: avg thr: 9279,31 #1    
+         avg lat:  11,8 ms
+
+Test TYPE 2: increasing message_rate 2 producer 4+4 consumer, 2 different topic, sending interval 60 sec
+#TEST 1 - KAFKA - 2 topic, 4 consumer on each topic , 8 consumer total
+Result topic1: avg thr:471.81      
+         avg lat:  10,9 ms
+Result topic2 avg thr:  469.65    
+         avg lat:  10.7 ms
+
+#TEST 2 - KAFKA - 2 topic, 4 consumer on each topic , 8 consumer total
+rate 
+Result topic1: avg thr:904.44      
+         avg lat:  10,71 ms
+Result topic2 avg thr:  904.86    
+         avg lat:  10.52 ms
+
+Notiamo che il tempo di esecuzione del producer, è uguale a quello dei consumer.
+Cioè appena il producer invia l'ultimo messaggio il consumer lo deliverà subito, (come confermato
+anche dalla bassa latenza). Questo ci dimostra che il collo di bottiglia è il producer.
+
+#TEST 2 - KAFKA - 2 topic, 4 consumer on each topic , 8 consumer total
+Result topic1: avg thr:1698.02     
+         avg lat:  10,53 ms
+Result topic2 avg thr:  1719.79    
+         avg lat:  10.15 ms
+
+
+#TEST 3 - KAFKA - 2 topic, 4 consumer on each topic , 8 consumer total
+Result topic1: avg thr: 5150.77     
+         avg lat:  11.83 ms
+Result topic2 avg thr:  5092.58    
+         avg lat:  11.74 ms
+
+(aggiungi dati mancanti - tanto comportamento uguale)
+ quindi deciso di fare 4 topic - 2+2+2+2 consumer, 2 su ogni topic
+
+
+#TEST 1 - KAFKA - 4 topic, 2 consumer on each topic , 2+2+2+2 consumer total
+rate 500 msg/sec
+Result topic1: avg thr: 446     
+         avg lat:  65.60 ms
+Result topic2 avg thr:  446    
+         avg lat:  80 ms
+
+#TEST 1 - KAFKA - 4 topic, 2 consumer on each topic , 2+2+2+2 consumer total
+rate 8000 msg/sec
+Result topic1: avg thr: 2774.92
+         avg lat:  39.50
+Result topic2 avg thr:  2730.111    
+         avg lat:  36.00
+
+
+
+#TEST 1 - KAFKA - 4 topic, 2 consumer on each topic , 2+2+2+2 consumer total
+rate 1000 msg/sec
+Result topic1: avg thr: 601.98     
+         avg lat:  32.03 ms
+Result topic2 avg thr:  446    
+         avg lat:  80 ms
+
+#TEST 1 - KAFKA - 4 topic, 2 consumer on each topic , 2+2+2+2 consumer total
+rate 2000 msg/sec
+Result topic1: avg thr: 1017.15     
+         avg lat:  32.18 ms
+Result topic2 avg thr:  446    
+         avg lat:  80 ms
+
+#TEST 1 - KAFKA - 4 topic, 2 consumer on each topic , 2+2+2+2 consumer total
+rate 4000 msg/sec
+Result topic1: avg thr: 1703.95     
+         avg lat:  40.50
+
+#TEST 1 - KAFKA - 4 topic, 2 consumer on each topic , 2+2+2+2 consumer total
+rate 8000 msg/sec
+Result topic1: avg thr: 2805.41     
+         avg lat:  37.74
+
+
+

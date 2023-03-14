@@ -3,9 +3,12 @@ from json import dumps
 from kafka import KafkaProducer
 from utils import generate_poisson
 import sys
+import json
 import numpy as np
+from random import randint
 END_CODE="end"
-
+producer_id=str(randint(100000000,999999999))
+payload = {}
 #Args 
 
 if len(sys.argv)<4:
@@ -32,16 +35,20 @@ j=0
 target_time=0
 print('sleep len: ', len(sleeps))
 print('sleep duration', np.sum(sleeps))
+payload['type']='init'
+payload['id']=producer_id
+
+producer.send(topic, value=json.dumps(payload), timestamp_ms = round(time()*1000))
 while j<len(sleeps):
     if(time()*1000>target_time):
         #print('in if')
-        data = 'hello'
+        payload['type']='data'
         #print(data+str(j))
-        producer.send(topic, value=data, timestamp_ms = round(time()*1000))
+        producer.send(topic, value=json.dumps(payload), timestamp_ms = round(time()*1000))
         target_time=time()*1000+sleeps[j]*1000
         j+=1
-    
-producer.send(topic, value=END_CODE, timestamp_ms = round(time()*1000))
+payload['type']='end'
+producer.send(topic, value=json.dumps(payload), timestamp_ms = round(time()*1000))
 producer.flush()
 #print("Time to execute: ", (finish-start)/1000, " sec")
 #print("Sleep time : ", slp, " sec")

@@ -4,6 +4,7 @@ from time import sleep, time
 from random import randint
 import numpy as np
 import sys
+import json
 from monitor import send_latencies, mean_lat
 topic=""
 END_CODE = "end"
@@ -38,31 +39,32 @@ thro={}
 # Event loop
 msg_size =0
 counter=0
+msg_lat={}
+n_msg={}
+first_msg_time={}
+last_msg_time={}
 for event in consumer:
-    counter+=1
-    event_data = event.value
-    #print(event_data)
-    if first_message_timestamp==0:
-        first_message_timestamp=event.timestamp;
-    lat= round(time()*1000) - event.timestamp;
-    sec=round(time())
-   #[if_true] if [expression] else [if_false]
-    if sec in thro.keys():
-        thro[sec]+=1  
-    else:
-        thro[sec]=0
-    latencies.append(int(lat))
-    #print(event_data, "Latency: " , lat)
-    if event_counter%100==0:
-        send_latencies(groupid, latencies)
-        latencies=[]
-    if event_data == END_CODE:
-        print("The mean throughput is ", counter*1000/((event.timestamp-first_message_timestamp)), "msg/s")
-        break
-    #sleep(0.1)
-coll=0
-for i in thro.keys():
-    coll+=thro[i]
-#print("The mean throughput is ", coll/len(thro.keys()), "msg/s")
-#print(thro)
-print("The mean of the latecy for consumer ", groupid, " is : ", mean_lat(groupid), " ms")
+    payload= json.loads(event.value)
+    event_type= payload.get('type')
+    prod_id=str(payload.get('id'))
+    #print('Received msg of type: ', event_type, ' from producer: ', prod_id)
+    if(event_type=='init'):
+        print('Producer id received init msg: ', prod_id)
+        first_msg_time[prod_id]=round(time()*1000)
+        last_msg_time[prod_id]=0
+        n_msg[prod_id]= 1
+        msg_lat[prod_id]= []
+        msg_lat[prod_id].append(round(time()*1000) - event.timestamp)
+        continue
+    if event_type=='end':
+        print("received end message from producer", prod_id)
+        last_msg_time[prod_id]=round(time()*1000)
+        print(" Received ", n_msg[prod_id], " messages from producer ", prod_id)
+        print("The mean throughput for producer ", prod_id, " is ", n_msg[prod_id]*1000/((last_msg_time[prod_id]-first_msg_time[prod_id])), "msg/s")
+        print("The mean latency is for producer ", prod_id ," is ", (sum(msg_lat[prod_id]))/n_msg[prod_id], "ms")
+        continue
+    #print('receiving ordinary message: ', event_type, " nmsg: ", n_msg[prod_id])
+    n_msg[prod_id]+= 1
+    msg_lat[prod_id].append(round(time()*1000) - event.timestamp)
+
+
