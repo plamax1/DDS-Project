@@ -47,14 +47,11 @@ public class Producer {
             // rabbitmq sends message body as byte[]
             byte[] messageContent = DEFAULT_MESSAGE_BODY.getBytes("UTF-8");
 
-            ArrayList<Double> sleeps = new ArrayList<Double>();
-            sleeps = poissonGenerator(Integer.parseInt(poisson), messagesToSend);
-
             // don't use poisson
             if (poisson.equals("N") || poisson == null) {
                 System.out.println(producerId + "] Sending " + messagesToSend + " messages containing the body '"
-                        + DEFAULT_MESSAGE_BODY + "' on topic '" + topic + "' with a constant rate of " + rate
-                        + " msg/s");
+                        + DEFAULT_MESSAGE_BODY + "' on topic '" + topic + "'. Delay between 2 messages is " + rate/(10*10*10*10*10*10)
+                        + " ms.");
                 for (int i = 0; i < messagesToSend; i++) {
 
                     timestamp = System.nanoTime();
@@ -74,6 +71,8 @@ public class Producer {
             }
             // use poisson
             else {
+                ArrayList<Double> sleeps = new ArrayList<Double>();
+                sleeps = poissonGenerator(Integer.parseInt(poisson), messagesToSend);
 
                 for (int i = 0; i < messagesToSend - 1; i++) {
                     timestamp = System.nanoTime();
@@ -167,7 +166,7 @@ public class Producer {
             System.out.println("number of messages to send for each nanoSecond: " + msgNanoSec);
             long delay = (long) ((float) 1 / msgNanoSec); // delay in nanoSec between 2 messages
             System.out.println("Delay between two messages set to " + delay + "ns ("
-                    + (msgNanoSec * 10 * 10 * 10 * 10 * 10 * 10) + " ms)");
+                    + ((double)msgNanoSec / (double)(10 * 10 * 10 * 10 * 10 * 10)) + " ms)");
             return delay;
         } else
             return -1;
