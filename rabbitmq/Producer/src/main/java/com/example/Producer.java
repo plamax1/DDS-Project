@@ -63,9 +63,11 @@ public class Producer {
                             new AMQP.BasicProperties.Builder().headers(messageProperties).build(),
                             messageContent);
 
-                    // VERBOSE
-                    verbose(i, timestamp, lasttime);
-
+                    /*
+                     * // VERBOSE
+                     * verbose(i, timestamp, lasttime);
+                     */
+                    
                     lasttime = timestamp;
                     wait(timestamp, rate);
                 }
