@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="656b166e-d18b-45fe-af66-d26f27b79f01" name="Changes" comment="ActiveMQ updated with the code">
+    <list default="true" id="656b166e-d18b-45fe-af66-d26f27b79f01" name="Changes" comment="ActiveMQ updated">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,17 +20,17 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/nojano/IdeaProjects/DDS-Project&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/nojano/IdeaProjects/DDS-Project",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -61,6 +61,11 @@
       <workItem from="1678786803083" duration="8000" />
       <workItem from="1678792213774" duration="16000" />
       <workItem from="1678792264656" duration="10000" />
+      <workItem from="1678792332366" duration="120000" />
+      <workItem from="1678792506760" duration="6000" />
+      <workItem from="1678792608332" duration="97000" />
+      <workItem from="1678792910921" duration="11000" />
+      <workItem from="1678883958232" duration="17000" />
     </task>
     <task id="LOCAL-00001" summary="ActiveMQ">
       <created>1670250457721</created>
@@ -83,7 +88,21 @@
       <option name="project" value="LOCAL" />
       <updated>1678721065536</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="ActiveMQ update">
+      <created>1678792370519</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1678792370519</updated>
+    </task>
+    <task id="LOCAL-00005" summary="ActiveMQ updated">
+      <created>1678792623445</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1678792623445</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -92,6 +111,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ActiveMQ" />
     <MESSAGE value="ActiveMQ updated with the code" />
-    <option name="LAST_COMMIT_MESSAGE" value="ActiveMQ updated with the code" />
+    <MESSAGE value="ActiveMQ update" />
+    <MESSAGE value="ActiveMQ updated" />
+    <option name="LAST_COMMIT_MESSAGE" value="ActiveMQ updated" />
   </component>
 </project>

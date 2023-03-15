@@ -1,11 +1,12 @@
-#!/usr/bin/bash
 #build the consumer container
 docker build ./Consumer -t consumer
-read -p "Please digit the name of the topic" TOPIC1
-read -p "Please digit how much consumer you want to instantiate" N
+echo "Please digit the name of the topic"
+read TOPIC1
+echo "Please digit how much consumer you want to instantiate"
+read N
 for (( i = 0; i < $N; i++ ))
 do 
-    docker run -d --network host -e TOPIC1 consumer #add -d to the command above to not show the consumer running
+    docker run --network host consumer $TOPIC1 #add -d to the command above to not show the consumer running
     echo "Consumer number $i running and listening on topic $TOPIC1"
 done
 
