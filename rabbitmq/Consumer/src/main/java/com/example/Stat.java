@@ -20,8 +20,10 @@ public class Stat {
             long rcvInstant = (long) delivery.getProperties().getHeaders().get("timestamp");
             long delay = System.nanoTime() - rcvInstant;
 
-            // VERBOSE
-            verbose(delivery, message, delay);
+            /*
+             * // VERBOSE
+             * verbose(delivery, message, delay);
+             */
 
             incMsgNumber();
             incDelaySum(delay);
