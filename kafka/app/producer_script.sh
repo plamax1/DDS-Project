@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/bash
 # Info
 # USAGE: producer_script.sh -topic -n_producers -msg_rate -num_msgs
 

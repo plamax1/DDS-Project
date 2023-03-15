@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/bash
 # Info
 # USAGE: consumer_script.sh -topic -n_consumers
 
