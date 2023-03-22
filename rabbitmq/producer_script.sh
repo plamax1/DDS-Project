@@ -1,32 +1,20 @@
 #! /bin/bash
 #build the producer container
 
+# Info
+# USAGE: producer_script.sh -topic -n_producers -poisson_rate -num_msgs -constant_rate
+
+
 docker build -t producer:1.0 ./Producer
 
-i=0;
-t=0;
-while [ $i -le 0 ];
-do
-    read -p "Define a topic: " topic
-    export topic=$topic
-    read -p "How many messages should it send about $topic? : " messagesToSend
-    export messagesToSend=$messagesToSend
-    read -p "Wanna use the poisson rate? (N or [int value]) : " poisson
-    export poisson=$poisson
-    read -p "OTHERWISE insert the message rate (msg/s) :" rate
-    export rate=$rate
+export topic=$1
+export messagesToSend=$4
+export poisson=$3
+rate=0
+export rate=$5
 
-    read -p "How many producer do you want to create for topic $topic? : " createNumber
-    for j in `seq 1 $createNumber`;
+for j in `seq 1 $2`;
     do
-        ((t=t+1+i))
-        docker run -d --network host -e topic -e messagesToSend -e poisson -e rate producer:1.0
-        echo "Producer number $t running and producing $messagesToSend on topic $topic"
-    done
-    
-    read -p "Need more producer to generate? (Y/N): " go
-    if [ $go == "N" ];
-    then 
-        ((i=i+1))
-    fi
+    docker run -d --name "producer_$1_$j" --network host  -e topic -e messagesToSend -e poisson -e rate producer:1.0
+    echo "Producer number $j running and producing $messagesToSend messages on topic $topic using a poisson rate of $poisson. Constant rate is set to [ $rate ]"
 done

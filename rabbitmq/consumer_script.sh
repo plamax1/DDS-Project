@@ -1,26 +1,15 @@
 #! /bin/bash
 #build the consumer container
 
+# Info
+# USAGE: consumer_script.sh -topic -n_consumer
+
+
 docker build -t consumer:1.0 ./Consumer
 
-i=0;
-t=0;
-while [ $i -le 0 ];
-do
-    read -p "Define a topic: " topic
-    read -p "How many consumers you want to create as a subscriber of $topic? : " createNumber
-    export topic=$topic
-    for j in `seq 1 $createNumber`;
+export topic=$1
+for j in `seq 1 $n_consumer`;
     do
-        ((t=t+1))
-        docker run -d --network host -e topic consumer:1.0
-        echo "Consumer number $t running and listening on topic $topic"
-    done
-
-    read -p "Need more consumers to generate? (Y/N): " go
-
-    if [ $go == "N" ];
-    then 
-        ((i=i+1))
-    fi
+    docker run -d --name "consumer_$1_$j" --network host -e topic consumer:1.0
+    echo "Consumer number $j running and listening on topic $1"
 done
