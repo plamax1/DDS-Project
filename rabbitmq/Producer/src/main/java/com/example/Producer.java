@@ -124,6 +124,7 @@ public class Producer {
                     + DEFAULT_TOPIC + "'.");
             return DEFAULT_TOPIC;
         }
+        System.out.println("TOPIC: " + topic);
         return topic;
     }
 
