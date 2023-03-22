@@ -1,5 +1,5 @@
 #! /bin/bash
-#USAGE: test3.sh -n_producers -poisson_rate -num_msgs
+#USAGE: test3_producer_launcer.sh -n_producers -poisson_rate -num_msgs
 
 #generate n_producers on different topics and the same message behaviour. 
 #Naming the topics starting from "a".

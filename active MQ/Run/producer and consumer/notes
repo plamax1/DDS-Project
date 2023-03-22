@@ -1,4 +1,0 @@
-
-sudo docker build . -t producer//useful to build the image
-sudo docker run --network host producer // to run and to automically map the useful port for the connection
-
