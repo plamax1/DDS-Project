@@ -1,7 +1,7 @@
 #! /bin/bash
-#USAGE: test3_producer_launcer.sh -n_producers -poisson_rate -num_msgs
+#USAGE: test3_consumer_launcher.sh -n_consumers
 
-#generate n_producers on different topics and the same message behaviour. 
+#generate n_consumers on different topics 
 #Naming the topics starting from "a".
 
 for i in `seq 1 $1`;
@@ -9,6 +9,6 @@ for i in `seq 1 $1`;
     declare -i v=$((96 + $i))
     #convert letter ASCII number into string
     topicName=$(printf \\$(printf '%03o' $v))
-    bash ./producer_script.sh $topicName 1 $2 $3
+    bash ./consumer_script.sh $topicName 1
 done
 
