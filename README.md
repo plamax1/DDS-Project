@@ -58,17 +58,13 @@ docker-compose up --build
 ### Start the Consumers
 ```bash
 cd rabbitmq
-./consumer_script.sh
+bash consumer_script.sh -topic -n_consumer
 ```
 Insert the topic a Consumer should be listening on, and the number of consumer to run with this instruction.
 After creation, consumers remains active and listening.
+Consumers calculate statistics for each producer from whom they receive messages.
 ### Start the Producers
 ```bash
 cd rabbitmq
-./producer_script.sh
+bash producer_script.sh -producer_script.sh -topic -n_producers -msg_rate -num_msgs
 ```
-Insert the topic and the number of messages to send. The message content is "Hello".
-Then choose, for each producer, whether you want to use a poisson distribution message delays (enter the lambda value). 
-If you entered "N" for the poisson distribution, you can specify a constant delay between the messages (msg/min).
-When the job is finished, the producer sends a message with "end" content and stops execution.
-Consumers receives that message and prints a short statistics.
