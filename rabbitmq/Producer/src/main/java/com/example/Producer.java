@@ -51,7 +51,7 @@ public class Producer {
             if (poisson.equals("N") || poisson == null) {
                 System.out.println(producerId + "] Sending " + messagesToSend + " messages containing the body '"
                         + DEFAULT_MESSAGE_BODY + "' on topic '" + topic + "'. Delay between 2 messages is "
-                        + rate / (10 * 10 * 10 * 10 * 10 * 10)
+                        + rate / (1000000)
                         + " ms.");
                 for (int i = 0; i < messagesToSend; i++) {
 
@@ -104,8 +104,8 @@ public class Producer {
                     endMessage.getBytes("UTF-8"));
 
             // print total elapsed time
-            System.out.println("Transmission ended. It requires " + (System.nanoTime() - startTime)
-                    + "ns (" + ((System.nanoTime() - startTime) / (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10))
+            System.out.println("Transmission ended. It required " + ((System.nanoTime() - startTime)/ 1000000)
+                    + "ms (" + ((System.nanoTime() - startTime) / (1000000000))
                     + "s) to send " + messagesToSend + " messages.");
         }
     }
@@ -168,11 +168,11 @@ public class Producer {
             int msgSec = Integer.parseInt(messageRate);
             System.out.println("Input msg/s is " + msgSec);
             // number of messages to send for each nano sec
-            float msgNanoSec = (float) ((float) msgSec) / ((float) (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10));
+            float msgNanoSec = (float) ((float) msgSec) / ((float) (1000000000));
             System.out.println("number of messages to send for each nanoSecond: " + msgNanoSec);
             long delay = (long) ((float) 1 / msgNanoSec); // delay in nanoSec between 2 messages
             System.out.println("Delay between two messages set to " + delay + "ns ("
-                    + ((double) msgNanoSec / (double) (10 * 10 * 10 * 10 * 10 * 10)) + " ms)");
+                    + ((double) msgNanoSec / (double) (1000000)) + " ms)");
             return delay;
         } else
             return -1;
@@ -186,13 +186,13 @@ public class Producer {
 
     // Prints messages sent in constant mode
     public static void verbose(int msgN, long timestamp, long lasttime) {
-        System.out.println(msgN + "] Elapsed time: " + (timestamp - lasttime) / (10 * 10 * 10 * 10 * 10 * 10) + "ms.");
+        System.out.println(msgN + "] Elapsed time: " + (timestamp - lasttime) / (1000000) + "ms.");
     }
 
     // Prints messages sent in poisson mode
     public static void verbose(int msgN, long timestamp, long lasttime, double poissonValue) {
         System.out.println(msgN + "] Poisson Value: " + poissonValue + "]. Elapsed time: "
-                + (timestamp - lasttime) / (10 * 10 * 10 * 10 * 10 * 10) + "ms.");
+                + (timestamp - lasttime) / (1000000) + "ms.");
     }
 
 }

@@ -19,7 +19,6 @@ public class Main {
         //int number = sc.nextInt();
         long timestamp = 0;
         long targetTime = 0;
-        long time = 0;
 
         ArrayList<Double> sleeps = new ArrayList<Double>();
         sleeps = poisson(Integer.parseInt(lampda), Integer.parseInt(number));

@@ -47,7 +47,7 @@ public class Consumer {
         // instantiate the object for the statistics on trasmission
         producerStats = new ArrayList<Stat>();
 
-        System.out.println("Waiting for messages. Topic is " + bindingKey + ". To exit press CTRL+C.");
+        System.out.println("Waiting for messages. Topic is " + bindingKey + ".");
 
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody(), "UTF-8");
@@ -61,7 +61,7 @@ public class Consumer {
             }
 
             if (UUIDExist == false) { // create a new producer Stats
-                System.out.println("New producer: [ " + messageUUID + "] recceiving messages. End message is '"
+                System.out.println("New producer: [" + messageUUID + "] recceiving messages. End message is '"
                         + endMessage + "'");
                 producerStats.add(new Stat(messageUUID));
             }

@@ -36,7 +36,7 @@ public class Stat {
         // Print average
         double avgDelay = computeAverageDelay();
         System.out.println("[" + getUUID() + "] '" + endMessage + "' RECEIVED! The average delay is "
-                + (double) ((avgDelay) / (double) (10 * 10 * 10 * 10 * 10 * 10)) + "ms.");
+                + (double) ((avgDelay) / (double) (1000000)) + "ms.");
 
         // compute total elapsed time
         long difference = computeTimeDifference();
@@ -45,8 +45,8 @@ public class Stat {
         float msgRate = computeMessageRate(difference);
         System.out
                 .println("[" + getUUID() + "] Received " + getMsgNumber() + " messages in "
-                        + difference / (10 * 10 * 10 * 10 * 10 * 10)
-                        + "ms ( + " + difference / (10 * 10 * 10 * 10 * 10 * 10 * 10 * 10 * 10) + "s). So you received "
+                        + difference / (1000000)
+                        + "ms ( + " + difference / (1000000000) + "s). So you received "
                         + String.format("%.02f", msgRate) + " messages/s.");
 
         // keep listening from this producer, so restart Stat
@@ -105,7 +105,7 @@ public class Stat {
 
     public void verbose(Delivery delivery, String message, long delay) {
         System.out.println("[" + getUUID() + "] - " + getMsgNumber() + " - Delay: ("
-                + ((float) delay / (float) (10 * 10 * 10 * 10 * 10 * 10)) + "ms) Received '" +
+                + ((float) delay / (float) (1000000)) + "ms) Received '" +
                 delivery.getEnvelope().getRoutingKey() + "': '" + message + "'");
     }
 }
