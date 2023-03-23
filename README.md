@@ -53,7 +53,7 @@ A topic exchange is used. So it is important to follow the topic routing key for
 ### Start the broker
 ```bash
 cd rabbitmq/Broker
-docker-compose up --build 
+docker-compose -p rabbitmq_broker up --build 
 ```
 ### Start the Consumers
 ```bash
@@ -68,3 +68,4 @@ Consumers calculate statistics for each producer from whom they receive messages
 cd rabbitmq
 bash producer_script.sh -producer_script.sh -topic -n_producers -msg_rate -num_msgs
 ```
+
